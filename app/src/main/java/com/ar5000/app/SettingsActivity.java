@@ -1,3 +1,4 @@
+// SettingsActivity.java
 package com.ar5000.app;
 
 import android.content.SharedPreferences;
@@ -125,14 +126,15 @@ public class SettingsActivity extends AppCompatActivity {
             @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        spBaud.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                int rate = Integer.parseInt(spBaud.getItemAtPosition(pos).toString());
-                sendCommand(CommandFactory.setBaud(rate));
-                prefs.edit().putString("baud", String.valueOf(rate)).apply();
-            }
-            @Override public void onNothingSelected(AdapterView<?> parent) {}
-        });
+        // [FIXED] spBaud: setBaud() removed - "BS" is for Search-Link Bank, not baud rate
+        // spBaud.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        //     @Override public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+        //         int rate = Integer.parseInt(spBaud.getItemAtPosition(pos).toString());
+        //         sendCommand(CommandFactory.setBaud(rate));
+        //         prefs.edit().putString("baud", String.valueOf(rate)).apply();
+        //     }
+        //     @Override public void onNothingSelected(AdapterView<?> parent) {}
+        // });
 
         spDtmf.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -143,14 +145,15 @@ public class SettingsActivity extends AppCompatActivity {
             @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        spLamp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                boolean on = pos == 0;
-                sendCommand(CommandFactory.setLamp(on));
-                prefs.edit().putBoolean("lampOn", on).apply();
-            }
-            @Override public void onNothingSelected(AdapterView<?> parent) {}
-        });
+        // [FIXED] spLamp: setLamp() removed - "LM" is for AGC level, not lamp control
+        // spLamp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        //     @Override public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+        //         boolean on = pos == 0;
+        //         sendCommand(CommandFactory.setLamp(on));
+        //         prefs.edit().putBoolean("lampOn", on).apply();
+        //     }
+        //     @Override public void onNothingSelected(AdapterView<?> parent) {}
+        // });
 
 /*        cbNb.setOnCheckedChangeListener((btn, isChecked) -> {
             sendCommand(CommandFactory.setNoiseBlanker(isChecked));

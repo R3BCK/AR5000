@@ -1,4 +1,4 @@
-//VirtualPanelController.java
+// VirtualPanelController.java
 package com.ar5000.core.panel;
 
 import com.ar5000.core.protocol.Ar5000Command;
@@ -57,7 +57,8 @@ public class VirtualPanelController {
                 c = CommandFactory.setAttenuator(0);
                 break;
             case "SCAN":
-                c = CommandFactory.startScan(state.getBank());
+                // [FIXED] getBank() -> getScanBank() (метод в ReceiverState)
+                c = CommandFactory.startScan(state.getScanBank());
                 break;
         }
         if (c != null) {

@@ -433,21 +433,23 @@ public class MainActivity extends AppCompatActivity implements Ar5000Controller.
             });
         }
 
-        if (sliderRfGain != null && txtRfGain != null) {
-            sliderRfGain.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                @Override public void onProgressChanged(SeekBar sb, int val, boolean from) { if (from) { txtRfGain.setText(String.valueOf(val)); safeSend(() -> controller.setRfGain(val)); } }
-                @Override public void onStartTrackingTouch(SeekBar sb) {}
-                @Override public void onStopTrackingTouch(SeekBar sb) {}
-            });
-        }
+        // [FIXED] sliderRfGain: setRfGain() removed - command "RG" not in spec
+        // if (sliderRfGain != null && txtRfGain != null) {
+        //     sliderRfGain.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        //         @Override public void onProgressChanged(SeekBar sb, int val, boolean from) { if (from) { txtRfGain.setText(String.valueOf(val)); safeSend(() -> controller.setRfGain(val)); } }
+        //         @Override public void onStartTrackingTouch(SeekBar sb) {}
+        //         @Override public void onStopTrackingTouch(SeekBar sb) {}
+        //     });
+        // }
 
-        if (sliderIfShift != null && txtIfShift != null) {
-            sliderIfShift.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                @Override public void onProgressChanged(SeekBar sb, int val, boolean from) { if (from) { int shift = val - 3000; txtIfShift.setText(shift + " Hz"); safeSend(() -> controller.setIfShift(shift)); } }
-                @Override public void onStartTrackingTouch(SeekBar sb) {}
-                @Override public void onStopTrackingTouch(SeekBar sb) {}
-            });
-        }
+        // [FIXED] sliderIfShift: setIfShift() removed - command "IS" not in spec
+        // if (sliderIfShift != null && txtIfShift != null) {
+        //     sliderIfShift.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        //         @Override public void onProgressChanged(SeekBar sb, int val, boolean from) { if (from) { int shift = val - 3000; txtIfShift.setText(shift + " Hz"); safeSend(() -> controller.setIfShift(shift)); } }
+        //         @Override public void onStartTrackingTouch(SeekBar sb) {}
+        //         @Override public void onStopTrackingTouch(SeekBar sb) {}
+        //     });
+        // }
 
         // ===== KNOBS LISTENERS =====
         if (knobAfGain != null && txtAfGain != null) {
@@ -532,14 +534,25 @@ public class MainActivity extends AppCompatActivity implements Ar5000Controller.
 
         if (btnStep != null) btnStep.setOnClickListener(v -> { long[] steps = {5000, 10000, 25000, 50000, 100000}; currentStepIdx = (currentStepIdx + 1) % steps.length; safeSend(() -> controller.setStep(steps[currentStepIdx])); });
         if (btnAtt != null) btnAtt.setOnClickListener(v -> { int[] att = {0, 1, 2}; currentAtt = (currentAtt + 1) % att.length; safeSend(() -> controller.setAttenuator(currentAtt)); });
-        if (btnNb != null) btnNb.setOnClickListener(v -> { currentNb = (currentNb + 1) % 2; safeSend(() -> controller.setNoiseBlanker(currentNb)); });
-        if (btnAgc != null) btnAgc.setOnClickListener(v -> { currentAgc = (currentAgc + 1) % 4; safeSend(() -> controller.setAgc(currentAgc)); });
+
+        // [FIXED] btnNb: setNoiseBlanker() removed - command "NB" not in spec
+        // if (btnNb != null) btnNb.setOnClickListener(v -> { currentNb = (currentNb + 1) % 2; safeSend(() -> controller.setNoiseBlanker(currentNb)); });
+
+        // [FIXED] btnAgc: setAgc() removed - command "AG" not in spec
+        // if (btnAgc != null) btnAgc.setOnClickListener(v -> { currentAgc = (currentAgc + 1) % 4; safeSend(() -> controller.setAgc(currentAgc)); });
+
         if (btnHpf != null) btnHpf.setOnClickListener(v -> { currentHpf = (currentHpf + 1) % 5; safeSend(() -> controller.setHpf(currentHpf)); });
         if (btnLpf != null) btnLpf.setOnClickListener(v -> { currentLpf = (currentLpf + 1) % 5; safeSend(() -> controller.setLpf(currentLpf)); });
         if (btnCtcss != null) btnCtcss.setOnClickListener(v -> { currentCtcss = (currentCtcss + 1) % 2; safeSend(() -> controller.setCtcss(currentCtcss)); });
-        if (btnDcs != null) btnDcs.setOnClickListener(v -> { currentDcs = (currentDcs + 1) % 2; safeSend(() -> controller.setDcs(currentDcs)); });
-        if (btnOffset != null) btnOffset.setOnClickListener(v -> safeSend(() -> controller.clearOffset()));
-        if (btnTxt != null) btnTxt.setOnClickListener(v -> safeSend(() -> controller.setLcdText("AR5000")));
+
+        // [FIXED] btnDcs: setDcs() removed - command "DC" not in spec
+        // if (btnDcs != null) btnDcs.setOnClickListener(v -> { currentDcs = (currentDcs + 1) % 2; safeSend(() -> controller.setDcs(currentDcs)); });
+
+        // [FIXED] btnOffset: clearOffset() removed - command "OF" not in spec
+        // if (btnOffset != null) btnOffset.setOnClickListener(v -> safeSend(() -> controller.clearOffset()));
+
+        // [FIXED] btnTxt: setLcdText() removed - "TX" not for LCD text in spec
+        // if (btnTxt != null) btnTxt.setOnClickListener(v -> safeSend(() -> controller.setLcdText("AR5000")));
     }
 
     private void applyVfoSettings(int vfoIdx) {
@@ -654,7 +667,8 @@ public class MainActivity extends AppCompatActivity implements Ar5000Controller.
         if (input != null) input.setOnEditorActionListener((v, actionId, event) -> { if (android.view.inputmethod.EditorInfo.IME_ACTION_SEND == actionId) { if (btnSend != null) btnSend.performClick(); return true; } return false; });
 
         if (btnVR != null) btnVR.setOnClickListener(v -> sendCommand.accept("VR"));
-        if (btnAG != null) btnAG.setOnClickListener(v -> sendCommand.accept("AG?"));
+        // [FIXED] btnAG: "AG" command not in spec, replaced with LM for AGC level
+        if (btnAG != null) btnAG.setOnClickListener(v -> sendCommand.accept("LM"));
         if (btnMD != null) btnMD.setOnClickListener(v -> sendCommand.accept("MD 0"));
         if (btnClear != null) btnClear.setOnClickListener(v -> runOnUiThread(() -> { if (output != null) output.setText(""); }));
 

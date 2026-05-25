@@ -7,21 +7,54 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ResponseParser {
+
     private Ar5000Controller.ResponseListener listener;
     private static final String TAG = "RX-PARSE";
 
-    // ===== PATTERNS FOR SINGLE-LINE RESPONSES =====
-    private static final Pattern FREQ_PATTERN = Pattern.compile("^([A-E]) RF (\\d+(?:\\.\\d+)?)$");
-    private static final Pattern MODE_PATTERN = Pattern.compile("^MD (\\d+)$");
-    private static final Pattern BW_PATTERN = Pattern.compile("^BW (\\d+)$");
-    private static final Pattern STEP_PATTERN = Pattern.compile("^ST (\\d+)$");
-    private static final Pattern ATT_PATTERN = Pattern.compile("^AT ([0-2F])$");
-    private static final Pattern ANT_PATTERN = Pattern.compile("^AN ([0-4])$");
-    private static final Pattern SQ_PATTERN = Pattern.compile("^RQ \\+?(\\d+)$");
-    private static final Pattern AGC_PATTERN = Pattern.compile("^LM ([0-9A-Fa-f]{2})$");
-    private static final Pattern ERR_PATTERN = Pattern.compile("^ERR");
-    private static final Pattern BUSY_PATTERN = Pattern.compile("BUSY|OPEN|\\+\\d+");
-    private static final Pattern CLEAR_PATTERN = Pattern.compile("CLEAR|CLOSED|(?<!\\+)\\d{3}(?!\\+)");
+    // ===== PATTERNS FOR SINGLE-LINE RESPONSES (FIXED to match PDF spec) =====
+
+    // [FIXED] Format: VxRFnnnnnnnnnn (no spaces, no brackets)
+    private static final Pattern FREQ_PATTERN = Pattern.compile("^V([A-E])RF(\\d+)$");
+
+    // Mode: MDn
+    private static final Pattern MODE_PATTERN = Pattern.compile("^MD(\\d+)$");
+
+    // Bandwidth: BWn
+    private static final Pattern BW_PATTERN = Pattern.compile("^BW(\\d+)$");
+
+    // Step: STnnnnnn (Hz)
+    private static final Pattern STEP_PATTERN = Pattern.compile("^ST(\\d+)$");
+
+    // Attenuator: ATn or ATF
+    private static final Pattern ATT_PATTERN = Pattern.compile("^AT([0-2F])$");
+
+    // Antenna: ANn
+    private static final Pattern ANT_PATTERN = Pattern.compile("^AN([0-4])$");
+
+    // [FIXED] Squelch: RQnnn or RQ+nnn (no space, + indicates squelch open)
+    private static final Pattern SQ_PATTERN = Pattern.compile("^RQ(\\+?)(\\d+)$");
+
+    // [FIXED] AGC Level: LMnn or LM%nn (no space, % indicates squelch closed)
+    private static final Pattern AGC_PATTERN = Pattern.compile("^LM(%?)([0-9A-Fa-f]{2})$");
+
+    // [ADDED] AGC Level Send status: LCn
+    private static final Pattern AGC_SEND_PATTERN = Pattern.compile("^LC([01])$");
+
+    // [ADDED] Version: VRxxx
+    private static final Pattern VERSION_PATTERN = Pattern.compile("^VR(.+)$");
+
+    // [ADDED] Memory read: MAnmm RF... MD... BW... (simplified, full parse in status dump)
+    private static final Pattern MEM_READ_PATTERN = Pattern.compile("^MA(\\d)(\\d{2})\\s+RF(\\d+)\\s+MD(\\d+)\\s+BW(\\d+)$");
+
+    // [ADDED] Text memo: TMnn <text>
+    private static final Pattern MEMO_PATTERN = Pattern.compile("^TM(\\d{2})\\s*(.*)$");
+
+    // [ADDED] CW Pitch: CWn
+    private static final Pattern CW_PATTERN = Pattern.compile("^CW(\\d)$");
+
+    // Error: unknown command
+    // [FIXED] Protocol returns "?" not "ERR"
+    private static final String UNKNOWN_CMD_RESPONSE = "?";
 
     public void setListener(Ar5000Controller.ResponseListener listener) {
         this.listener = listener;
@@ -33,7 +66,13 @@ public class ResponseParser {
 
     /**
      * Parses a single-line response from AR5000.
-     * Examples: "MD 0", "BW 3", "RQ +128", "VA RF 145000000"
+     * Examples from PDF:
+     *   "VARMF145000000" - frequency for VFO A
+     *   "MD0" - mode FM
+     *   "RQ+128" - squelch open, level 128
+     *   "LMFF" - AGC level 0xFF, squelch open
+     *   "LM%80" - AGC level 0x80, squelch closed
+     *   "?" - unknown command
      */
     public void parse(String line) {
         if (line == null || line.trim().isEmpty() || listener == null) return;
@@ -41,119 +80,233 @@ public class ResponseParser {
         String trimmed = line.trim();
         Log.d(TAG, "Single: " + trimmed);
 
-        // Try single-line patterns first
-        Matcher m = FREQ_PATTERN.matcher(trimmed);
-        if (m.matches()) {
-            listener.onFrequencyChanged(m.group(1), parseFreq(m.group(2)));
+        // [FIXED] Handle unknown command response FIRST
+        if (UNKNOWN_CMD_RESPONSE.equals(trimmed)) {
+            listener.onError("Unknown command (?)");
             return;
         }
 
+        Matcher m;
+
+        // Frequency: VxRFnnnnnnnnnn
+        m = FREQ_PATTERN.matcher(trimmed);
+        if (m.matches()) {
+            String vfo = m.group(1);
+            long freq = parseFreq(m.group(2));
+            listener.onFrequencyChanged(vfo, freq);
+            return;
+        }
+
+        // Mode: MDn
         m = MODE_PATTERN.matcher(trimmed);
         if (m.matches()) {
             listener.onModeChanged(Integer.parseInt(m.group(1)));
             return;
         }
 
+        // Bandwidth: BWn
         m = BW_PATTERN.matcher(trimmed);
         if (m.matches()) {
             listener.onBandwidthChanged(Integer.parseInt(m.group(1)));
             return;
         }
 
+        // Step: STnnnnnn
         m = STEP_PATTERN.matcher(trimmed);
         if (m.matches()) {
-            // Step changed - could notify if needed
+            // Could notify step change if needed
             return;
         }
 
+        // Attenuator: ATn or ATF
         m = ATT_PATTERN.matcher(trimmed);
         if (m.matches()) {
-            // Attenuator changed
+            // Could notify attenuator change
             return;
         }
 
+        // Antenna: ANn
         m = ANT_PATTERN.matcher(trimmed);
         if (m.matches()) {
-            // Antenna changed
+            // Could notify antenna change
             return;
         }
 
+        // [FIXED] Squelch: RQ+nnn (open) or RQnnn (closed)
         m = SQ_PATTERN.matcher(trimmed);
         if (m.matches()) {
-            // Squelch level changed
+            boolean squelchOpen = "+".equals(m.group(1));
+            int level = Integer.parseInt(m.group(2));
+            // Could notify squelch state + level
             return;
         }
 
+        // [FIXED] AGC Level: LMnn (squelch open) or LM%nn (squelch closed)
         m = AGC_PATTERN.matcher(trimmed);
         if (m.matches()) {
-            // AGC level changed
+            boolean squelchOpen = !"%".equals(m.group(1));
+            int level = Integer.parseInt(m.group(2), 16);
+            // Could notify AGC level + squelch state
             return;
         }
 
-        if (ERR_PATTERN.matcher(trimmed).find()) {
-            listener.onError(trimmed);
+        // [ADDED] AGC Level Send status: LC0 (off) or LC1 (on)
+        m = AGC_SEND_PATTERN.matcher(trimmed);
+        if (m.matches()) {
+            boolean enabled = "1".equals(m.group(1));
+            // Could notify AGC auto-send status
             return;
         }
 
-        if (BUSY_PATTERN.matcher(trimmed).find() && !CLEAR_PATTERN.matcher(trimmed).find()) {
-            listener.onBusy(true);
-            return;
-        }
-        if (CLEAR_PATTERN.matcher(trimmed).find() && !BUSY_PATTERN.matcher(trimmed).find()) {
-            listener.onBusy(false);
+        // [ADDED] Version: VRxxx
+        m = VERSION_PATTERN.matcher(trimmed);
+        if (m.matches()) {
+            String version = m.group(1);
+            // Could notify version string
             return;
         }
 
-        // Fallback: pass raw status to listener
+        // [ADDED] Memory read: MAnmm RF... MD... BW...
+        m = MEM_READ_PATTERN.matcher(trimmed);
+        if (m.matches()) {
+            int bank = Integer.parseInt(m.group(1));
+            int channel = Integer.parseInt(m.group(2));
+            long freq = parseFreq(m.group(3));
+            int mode = Integer.parseInt(m.group(4));
+            int bw = Integer.parseInt(m.group(5));
+            // Could notify memory channel data
+            return;
+        }
+
+        // [ADDED] Text memo: TMnn <text>
+        m = MEMO_PATTERN.matcher(trimmed);
+        if (m.matches()) {
+            int channel = Integer.parseInt(m.group(1));
+            String text = m.group(2);
+            // Could notify text memo content
+            return;
+        }
+
+        // [ADDED] CW Pitch: CWn
+        m = CW_PATTERN.matcher(trimmed);
+        if (m.matches()) {
+            int pitch = Integer.parseInt(m.group(1));
+            // Could notify CW pitch
+            return;
+        }
+
+        // Fallback: pass raw status to listener for debugging
         listener.onRawStatus(trimmed);
     }
 
     /**
-     * Parses a full status dump from RX command using direct calls.
-     * Format according to PDF: VA RF145000000 ST5000 AU0 MD0 AT0 AN1 RQ128 LMFF TMTEXT
-     * Logs every token for debugging. Does not swallow errors.
+     * Parses a full status dump from RX command.
+     * Format from PDF:
+     *   VA RF145000000 ST5000 AU0 MD0 AT0 AN1 RQ128 LMFF TMTEXT
+     * Notes:
+     *   - Tokens are space-separated
+     *   - VFO prefix: VA, VB, etc. (no space between letter and RF)
+     *   - LM: hex level, squelch state encoded in presence of % in single-line mode
+     *   - RQ: decimal level, + prefix indicates squelch open in single-line mode
      */
     public void parseStatusDump(String raw, ReceiverState state) {
         if (raw == null || raw.trim().isEmpty() || state == null) return;
+
         Log.d(TAG, "Dump RAW: [" + raw + "]");
+
+        // [FIXED] Check for unknown command response in dump too
+        if (UNKNOWN_CMD_RESPONSE.equals(raw.trim())) {
+            if (listener != null) listener.onError("Unknown command in status dump (?)");
+            return;
+        }
 
         String[] tokens = raw.trim().split("\\s+");
         for (String token : tokens) {
             if (token.isEmpty()) continue;
             try {
+                // VFO prefix: VA, VB, etc.
                 if (token.length() == 2 && token.charAt(0) == 'V' && "ABCDE".indexOf(token.charAt(1)) >= 0) {
                     state.setVfo(token.substring(1));
-                } else if (token.startsWith("RF")) {
+                }
+                // Frequency: RFnnnnnnnnnn
+                else if (token.startsWith("RF")) {
                     state.setFrequencyHz(parseFreq(token.substring(2)));
-                } else if (token.startsWith("ST")) {
+                }
+                // Step: STnnnnnn
+                else if (token.startsWith("ST")) {
                     state.setStepHz(Long.parseLong(token.substring(2)));
-                } else if (token.startsWith("AU")) {
+                }
+                // Auto mode: AU0/AU1
+                else if (token.startsWith("AU")) {
                     state.setAutoMode("1".equals(token.substring(2)));
-                } else if (token.startsWith("MD")) {
+                }
+                // Mode: MDn
+                else if (token.startsWith("MD")) {
                     state.setModeCode(Integer.parseInt(token.substring(2)));
-                } else if (token.startsWith("BW")) {
-                    state.setBwCode(Integer.parseInt(token.substring(2)));
-                } else if (token.startsWith("AT")) {
+                }
+                // [FIXED] Bandwidth: BWn — теперь обновляем bwCode в состоянии
+                else if (token.startsWith("BW")) {
+                    int bw = Integer.parseInt(token.substring(2));
+                    if (bw >= Ar5000Protocol.BW_0_5K && bw <= Ar5000Protocol.BW_220K) {
+                        state.setBwCode(bw);
+                    }
+                }
+                // Attenuator: ATn or ATF
+                else if (token.startsWith("AT")) {
                     String v = token.substring(2);
                     state.setAttenuator("F".equalsIgnoreCase(v) ? 3 : Integer.parseInt(v));
-                } else if (token.startsWith("AN")) {
+                }
+                // Antenna: ANn
+                else if (token.startsWith("AN")) {
                     state.setAntenna(Integer.parseInt(token.substring(2)));
-                } else if (token.startsWith("RQ")) {
+                }
+                // Squelch: RQnnn or RQ+nnn
+                else if (token.startsWith("RQ")) {
                     String v = token.substring(2);
-                    if (v.startsWith("+")) { state.setSquelchOpen(true); v = v.substring(1); }
-                    else { state.setSquelchOpen(false); }
-                } else if (token.startsWith("LM") || token.startsWith("LC")) {
-                    state.setAgcLevel(Integer.parseInt(token.substring(2), 16));
-                } else if (token.startsWith("TM")) {
-                    state.setLcdText(token.substring(2));
-                } else {
+                    if (v.startsWith("+")) {
+                        state.setSquelchOpen(true);
+                        v = v.substring(1);
+                    } else {
+                        state.setSquelchOpen(false);
+                    }
+                    // Level is decimal in dump
+                    // state.setSquelchLevel(Integer.parseInt(v)); // if needed
+                }
+                // AGC Level: LMnn (dump uses hex, squelch state not encoded here)
+                else if (token.startsWith("LM")) {
+                    String v = token.substring(2);
+                    state.setAgcLevel(Integer.parseInt(v, 16));
+                }
+                // [ADDED] AGC Send status: LCn (if included in dump)
+                else if (token.startsWith("LC")) {
+                    // state.setAgcAutoSend("1".equals(token.substring(2))); // if needed
+                }
+                // Text memo: TMnn<text> (no space in dump)
+                else if (token.startsWith("TM")) {
+                    String v = token.substring(2);
+                    // First 2 chars are channel, rest is text
+                    if (v.length() >= 2) {
+                        // int channel = Integer.parseInt(v.substring(0, 2));
+                        // String text = v.substring(2);
+                        // state.setLcdText(text); // if needed
+                    }
+                }
+                // [ADDED] CW Pitch: CWn
+                else if (token.startsWith("CW")) {
+                    // state.setCwPitch(Integer.parseInt(token.substring(2))); // if needed
+                }
+                // [ADDED] Version: VRxxx
+                else if (token.startsWith("VR")) {
+                    // state.setVersion(token.substring(2)); // if needed
+                }
+                else {
                     Log.d(TAG, "Skip unknown token: " + token);
                 }
             } catch (Exception e) {
                 Log.w(TAG, "Parse fail token: " + token, e);
             }
         }
-        Log.d(TAG, "Parsed state -> VFO:" + state.getVfo() + " F:" + state.getFrequencyHz() + " M:" + state.getModeCode());
+        Log.d(TAG, "Parsed state -> VFO:" + state.getVfo() + " F:" + state.getFrequencyHz() + " M:" + state.getModeCode() + " BW:" + state.getBwCode());
     }
 
     /**

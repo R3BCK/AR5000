@@ -1,6 +1,11 @@
 // CommandFactory.java
 package com.ar5000.core.protocol;
 
+// CommandFactory реализует статическую фабрику для создания объектов Ar5000Command.
+// Он генерирует команды как для ЗАПИСИ на устройство (write, readCommand=false),
+// так и для ЧТЕНИЯ с устройства (read, readCommand=true).
+// Параметр readCommand в конструкторе Ar5000Command определяет тип команды.
+
 public class CommandFactory {
 
     // ===== CORE VFO/FREQUENCY COMMANDS =====
@@ -25,35 +30,43 @@ public class CommandFactory {
     }
 
     // ===== GAIN / SHIFT / OFFSET COMMANDS =====
-    public static Ar5000Command setRfGain(int level) {
-        // RGnnn: 0-255
-        return new Ar5000Command("RG", true, true).addParam(String.valueOf(Math.max(0, Math.min(255, level))));
-    }
+    // [FIXED] Команда "RG" отсутствует в спецификации AR-5000_RS232_Command_list.pdf
+    // public static Ar5000Command setRfGain(int level) {
+    //     // RGnnn: 0-255
+    //     return new Ar5000Command("RG", true, true).addParam(String.valueOf(Math.max(0, Math.min(255, level))));
+    // }
 
-    public static Ar5000Command setIfShift(int shiftHz) {
-        // ISnnnn: -3000 to +3000 Hz
-        return new Ar5000Command("IS", true, true).addParam(String.valueOf(Math.max(-3000, Math.min(3000, shiftHz))));
-    }
+    // [FIXED] Команда "IS" отсутствует в спецификации
+    // public static Ar5000Command setIfShift(int shiftHz) {
+    //     // ISnnnn: -3000 to +3000 Hz
+    //     return new Ar5000Command("IS", true, true).addParam(String.valueOf(Math.max(-3000, Math.min(3000, shiftHz))));
+    // }
 
-    public static Ar5000Command setOffset(long offsetHz) {
-        // OFnnnnnn: offset in Hz
-        return new Ar5000Command("OF", true, true).addParam(String.valueOf(offsetHz));
-    }
+    // [FIXED] Команда "OF" отсутствует в спецификации
+    // public static Ar5000Command setOffset(long offsetHz) {
+    //     // OFnnnnnn: offset in Hz
+    //     return new Ar5000Command("OF", true, true).addParam(String.valueOf(offsetHz));
+    // }
 
-    public static Ar5000Command clearOffset() {
-        return new Ar5000Command("OF", true, true).addParam("0");
-    }
+    // [FIXED] Команда "OF" отсутствует в спецификации
+    // public static Ar5000Command clearOffset() {
+    //     return new Ar5000Command("OF", true, true).addParam("0");
+    // }
 
     // ===== FILTERS & AGC COMMANDS =====
-    public static Ar5000Command setAgc(int agcCode) {
-        // AGn: n=0(OFF),1(SLOW),2(MID),3(FAST)
-        return new Ar5000Command("AG", true, true).addParam(String.valueOf(Math.max(0, Math.min(3, agcCode))));
-    }
+    // [FIXED] Команда "AG" отсутствует в спецификации. Управление AGC-режимом
+    // не предусмотрено в данной версии протокола. Есть только чтение уровня (LM)
+    // и настройка авто-отправки (LC).
+    // public static Ar5000Command setAgc(int agcCode) {
+    //     // AGn: n=0(OFF),1(SLOW),2(MID),3(FAST)
+    //     return new Ar5000Command("AG", true, true).addParam(String.valueOf(Math.max(0, Math.min(3, agcCode))));
+    // }
 
-    public static Ar5000Command setNoiseBlanker(int nbCode) {
-        // NBn: n=0(OFF),1(NB1),2(NB2)
-        return new Ar5000Command("NB", true, true).addParam(String.valueOf(Math.max(0, Math.min(2, nbCode))));
-    }
+    // [FIXED] Команда "NB" отсутствует в спецификации
+    // public static Ar5000Command setNoiseBlanker(int nbCode) {
+    //     // NBn: n=0(OFF),1(NB1),2(NB2)
+    //     return new Ar5000Command("NB", true, true).addParam(String.valueOf(Math.max(0, Math.min(2, nbCode))));
+    // }
 
     public static Ar5000Command setHpf(int hpfCode) {
         // HPn: n=0(0.05K),1(0.2K),2(0.3K),3(0.4K)
@@ -79,10 +92,11 @@ public class CommandFactory {
         return new Ar5000Command("CN", true, true).addParam(String.format("%02d", Math.max(0, Math.min(37, ctcssCode))));
     }
 
-    public static Ar5000Command setDcs(int dcsCode) {
-        // DCnnn: nnn=0-104
-        return new Ar5000Command("DC", true, true).addParam(String.format("%03d", Math.max(0, Math.min(104, dcsCode))));
-    }
+    // [FIXED] Команда "DC" отсутствует в спецификации
+    // public static Ar5000Command setDcs(int dcsCode) {
+    //     // DCnnn: nnn=0-104
+    //     return new Ar5000Command("DC", true, true).addParam(String.format("%03d", Math.max(0, Math.min(104, dcsCode))));
+    // }
 
     // ===== MODE / BANDWIDTH / STEP COMMANDS =====
     public static Ar5000Command setMode(int mode) {
@@ -99,6 +113,18 @@ public class CommandFactory {
         // STnnnnnn: step in Hz
         return new Ar5000Command("ST", true, true).addParam(String.valueOf(stepHz));
     }
+
+    // [ADDED] Команда "ST+" для переключения режима Step Adjust (тонкая подстройка)
+    // Без параметров: включает/выключает режим подстройки
+    public static Ar5000Command toggleStepAdjust() {
+        return new Ar5000Command("ST+", true, true);
+    }
+
+    // [FIXED] Команда "SH" в спецификации не найдена. Если нужна установка
+    // значения подстройки, использовать ST+ с параметром в Гц.
+    // public static Ar5000Command setStepAdjust(long adjustHz) {
+    //     return new Ar5000Command("SH", true, true).addParam(String.valueOf(adjustHz));
+    // }
 
     // ===== SQUELCH / BEEP / ANTENNA COMMANDS =====
     public static Ar5000Command setSquelch(int level) {
@@ -128,28 +154,35 @@ public class CommandFactory {
     }
 
     // ===== CONFIG / SYSTEM COMMANDS =====
-    public static Ar5000Command setLamp(boolean on) {
-        return new Ar5000Command("LM", true, true).addParam(on ? "ON" : "OFF");
-    }
+    // [FIXED] Команда "LM" в спецификации используется для чтения уровня AGC,
+    // а не для управления лампой. Удалено во избежание конфликта.
+    // public static Ar5000Command setLamp(boolean on) {
+    //     return new Ar5000Command("LM", true, true).addParam(on ? "ON" : "OFF");
+    // }
 
     public static Ar5000Command setExtIf(int mode) {
         // AIn: n=0(OFF),1(IF1 ON),2(IF2 ON)
         return new Ar5000Command("AI", true, true).addParam(String.valueOf(Math.max(0, Math.min(2, mode))));
     }
 
-    public static Ar5000Command setBaud(int rate) {
-        return new Ar5000Command("BS", true, true).addParam(String.valueOf(rate));
-    }
+    // [FIXED] Команда "BS" в спецификации используется для Search-Link Bank,
+    // а не для установки baud rate. Удалено во избежание конфликта.
+    // public static Ar5000Command setBaud(int rate) {
+    //     return new Ar5000Command("BS", true, true).addParam(String.valueOf(rate));
+    // }
 
-    public static Ar5000Command setStdInt(String mode) {
-        // SIn: Standard Interval setting
-        return new Ar5000Command("SI", true, true).addParam(mode.toUpperCase());
-    }
+    // [FIXED] Команда "SI" отсутствует в спецификации
+    // public static Ar5000Command setStdInt(String mode) {
+    //     // SIn: Standard Interval setting
+    //     return new Ar5000Command("SI", true, true).addParam(mode.toUpperCase());
+    // }
 
-    public static Ar5000Command setLcdText(String text) {
-        String safe = text != null ? text.substring(0, Math.min(16, text.length())).replaceAll("[^\\x20-\\x7E]", " ") : "";
-        return new Ar5000Command("TX", true, true).addParam(safe);
-    }
+    // [FIXED] Команда "TX" в спецификации не предназначена для вывода текста на LCD.
+    // Удалено во избежание отправки неверной команды.
+    // public static Ar5000Command setLcdText(String text) {
+    //     String safe = text != null ? text.substring(0, Math.min(16, text.length())).replaceAll("[^\\x20-\\x7E]", " ") : "";
+    //     return new Ar5000Command("TX", true, true).addParam(safe);
+    // }
 
     // ===== MEMORY COMMANDS =====
     public static Ar5000Command writeMemory(int bank, int ch, long freq, int mode, int bw) {
@@ -165,7 +198,35 @@ public class CommandFactory {
 
     public static Ar5000Command clearMemory(int bank, int ch) {
         // MCnmm or MQnnmm: Clear specific bank/channel
+        // [NOTE] В спецификации есть и "MC", и "MQ" для удаления. Оставляем "MC".
         return new Ar5000Command("MC", true, true).addParam(String.format("%1d%02d", bank, ch));
+    }
+
+    // [ADDED] Команда "MQ" для удаления канала памяти (альтернатива MC)
+    public static Ar5000Command deleteMemoryChannel(int bank, int ch) {
+        return new Ar5000Command("MQ", true, true).addParam(String.format("%1d%02d", bank, ch));
+    }
+
+    // [ADDED] Команда "TM" для работы с текстовым комментарием канала памяти
+    // Запись текста (до 8 символов, диапазон 0x20-0x7E)
+    public static Ar5000Command setTextMemo(int channel, String text) {
+        if (channel < 0 || channel > 99) {
+            throw new IllegalArgumentException("Channel must be 0-99");
+        }
+        String safe = text != null
+                ? text.substring(0, Math.min(8, text.length())).replaceAll("[^\\x20-\\x7E]", " ")
+                : "";
+        return new Ar5000Command("TM", true, true)
+                .addParam(String.format("%02d", channel))
+                .addParam(safe);
+    }
+
+    // [ADDED] Команда "TM" для чтения текстового комментария канала памяти
+    public static Ar5000Command getTextMemo(int channel) {
+        if (channel < 0 || channel > 99) {
+            throw new IllegalArgumentException("Channel must be 0-99");
+        }
+        return new Ar5000Command("TM", false, true).addParam(String.format("%02d", channel));
     }
 
     // ===== SCAN & SEARCH COMMANDS =====
@@ -197,6 +258,27 @@ public class CommandFactory {
         return new Ar5000Command("SU", true, true).addParam(String.valueOf(freqHz));
     }
 
+    // [ADDED] Команда "SR" для чтения настроек банка поиска
+    public static Ar5000Command getSearchSetting(int bank) {
+        return new Ar5000Command("SR", false, true).addParam(String.format("%02d", Math.max(0, Math.min(19, bank))));
+    }
+
+    // [ADDED] Команда "PR" для чтения списка пропущенных частот
+    public static Ar5000Command getPassFreqList(int bank, int ch) {
+        if (bank < 0) {
+            return new Ar5000Command("PR", false, true).addParam(String.format("%% %02d", ch));
+        }
+        return new Ar5000Command("PR", false, true).addParam(String.format("%02d%02d", bank, ch));
+    }
+
+    // [ADDED] Команда "GR" для чтения списка каналов Select-Scan
+    public static Ar5000Command getSelectScanList(int group) {
+        if (group < 0) {
+            return new Ar5000Command("GR", false, true).addParam("%%");
+        }
+        return new Ar5000Command("GR", false, true).addParam(String.valueOf(Math.max(0, Math.min(9, group))));
+    }
+
     // ===== UTILITY / STATUS COMMANDS =====
     public static Ar5000Command getVersion() {
         return new Ar5000Command("VR", false, true);
@@ -207,9 +289,11 @@ public class CommandFactory {
     }
 
     // ===== PDF EXTENSIONS (Full AR5000 Command Set) =====
+    // [CORRECT] Команда "LM" для чтения уровня AGC (0-255)
     public static Ar5000Command getAgcLevel(boolean squelchOpen) {
         return new Ar5000Command(squelchOpen ? "LM" : "LM%", false, true);
     }
+    // [CORRECT] Команда "LC" для включения/выключения авто-отправки уровня AGC
     public static Ar5000Command setAgcLevelSend(boolean enabled) {
         return new Ar5000Command("LC", true, true).addParam(enabled ? "1" : "0");
     }
@@ -227,9 +311,6 @@ public class CommandFactory {
     }
     public static Ar5000Command setAutoMode(boolean enabled) {
         return new Ar5000Command("AU", true, true).addParam(enabled ? "1" : "0");
-    }
-    public static Ar5000Command setStepAdjust(long adjustHz) {
-        return new Ar5000Command("SH", true, true).addParam(String.valueOf(adjustHz));
     }
     public static Ar5000Command setSubStep(int code) {
         return new Ar5000Command("SJ", true, true).addParam(String.format("%X", Math.max(0, Math.min(10, code))));

@@ -1,3 +1,4 @@
+// RadioApi.java
 package com.ar5000.script;
 
 import com.ar5000.core.protocol.CommandFactory;
@@ -181,25 +182,40 @@ public class RadioApi {
         }
         return false;
     }
+
     // ===== NEW LUA API METHODS =====
 
     // 1. Step
     public void setStep(long hz) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setStep(hz).buildPacket()); } catch(Exception e){} }
 
+    // [ADDED] Toggle Step Adjust mode (ST+ command)
+    public void toggleStepAdjust() { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.toggleStepAdjust().buildPacket()); } catch(Exception e){} }
+
     // 2. Attenuator
     public void setAttenuator(int code) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setAttenuator(code).buildPacket()); } catch(Exception e){} }
 
     // 3. RF Gain
-    public void setRfGain(int level) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setRfGain(level).buildPacket()); } catch(Exception e){} }
+    // [FIXED] CommandFactory.setRfGain() removed - command "RG" not in spec
+    // public void setRfGain(int level) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setRfGain(level).buildPacket()); } catch(Exception e){} }
 
     // 4. AGC
-    public void setAgc(int mode) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setAgc(mode).buildPacket()); } catch(Exception e){} }
+    // [FIXED] CommandFactory.setAgc() removed - command "AG" not in spec
+    // Use getAgcLevel()/setAgcLevelSend() for AGC level monitoring instead
+    // public void setAgc(int mode) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setAgc(mode).buildPacket()); } catch(Exception e){} }
+
+    // [ADDED] Query AGC level (LM command)
+    public void getAgcLevel(boolean squelchOpen) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.getAgcLevel(squelchOpen).buildPacket()); } catch(Exception e){} }
+
+    // [ADDED] Enable/disable auto-send of AGC level (LC command)
+    public void setAgcLevelSend(boolean enabled) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setAgcLevelSend(enabled).buildPacket()); } catch(Exception e){} }
 
     // 5. Noise Blanker
-    public void setNoiseBlanker(int mode) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setNoiseBlanker(mode).buildPacket()); } catch(Exception e){} }
+    // [FIXED] CommandFactory.setNoiseBlanker() removed - command "NB" not in spec
+    // public void setNoiseBlanker(int mode) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setNoiseBlanker(mode).buildPacket()); } catch(Exception e){} }
 
     // 6. IF Shift / HPF / LPF
-    public void setIfShift(int hz) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setIfShift(hz).buildPacket()); } catch(Exception e){} }
+    // [FIXED] CommandFactory.setIfShift() removed - command "IS" not in spec
+    // public void setIfShift(int hz) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setIfShift(hz).buildPacket()); } catch(Exception e){} }
     public void setHpf(int code) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setHpf(code).buildPacket()); } catch(Exception e){} }
     public void setLpf(int code) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setLpf(code).buildPacket()); } catch(Exception e){} }
 
@@ -211,14 +227,83 @@ public class RadioApi {
         } catch(Exception e){}
     }
 
+    // [ADDED] Read search bank settings (SR command)
+    public void getSearchSetting(int bank) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.getSearchSetting(bank).buildPacket()); } catch(Exception e){} }
+
+    // [ADDED] Read pass frequency list (PR command)
+    public void getPassFreqList(int bank, int ch) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.getPassFreqList(bank, ch).buildPacket()); } catch(Exception e){} }
+
+    // [ADDED] Read select-scan channel list (GR command)
+    public void getSelectScanList(int group) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.getSelectScanList(group).buildPacket()); } catch(Exception e){} }
+
     // 8. CTCSS/DCS
     public void setCtcss(int code) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setCtcss(code).buildPacket()); } catch(Exception e){} }
-    public void setDcs(int code) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setDcs(code).buildPacket()); } catch(Exception e){} }
+    // [FIXED] CommandFactory.setDcs() removed - command "DC" not in spec
+    // public void setDcs(int code) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setDcs(code).buildPacket()); } catch(Exception e){} }
 
     // 10. LCD Text
-    public void setLcdText(String txt) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setLcdText(txt).buildPacket()); } catch(Exception e){} }
+    // [FIXED] CommandFactory.setLcdText() removed - "TX" not for LCD text in spec
+    // public void setLcdText(String txt) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setLcdText(txt).buildPacket()); } catch(Exception e){} }
 
     // 11. Offset
-    public void setOffset(long hz) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setOffset(hz).buildPacket()); } catch(Exception e){} }
-    public void clearOffset() { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.clearOffset().buildPacket()); } catch(Exception e){} }
+    // [FIXED] CommandFactory.setOffset()/clearOffset() removed - command "OF" not in spec
+    // public void setOffset(long hz) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setOffset(hz).buildPacket()); } catch(Exception e){} }
+    // public void clearOffset() { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.clearOffset().buildPacket()); } catch(Exception e){} }
+
+    // [ADDED] Text memo for memory channel (TM command)
+    public void setTextMemo(int channel, String text) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setTextMemo(channel, text).buildPacket()); } catch(Exception e){} }
+    public void getTextMemo(int channel) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.getTextMemo(channel).buildPacket()); } catch(Exception e){} }
+
+    // [ADDED] Delete memory channel using MQ command
+    public void deleteMemoryChannel(int bank, int ch) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.deleteMemoryChannel(bank, ch).buildPacket()); } catch(Exception e){} }
+
+    // [ADDED] Utility commands
+    public void tuneUp() { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.tuneUp().buildPacket()); } catch(Exception e){} }
+    public void tuneDown() { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.tuneDown().buildPacket()); } catch(Exception e){} }
+    public void exitRemote() { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.exitRemote().buildPacket()); } catch(Exception e){} }
+    public void powerOff() { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.powerOff().buildPacket()); } catch(Exception e){} }
+    public void powerOn() { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.powerOn().buildPacket()); } catch(Exception e){} }
+    public void getVersion() { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.getVersion().buildPacket()); } catch(Exception e){} }
+    public void setCwPitch(int code) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setCwPitch(code).buildPacket()); } catch(Exception e){} }
+    public void setCyberScan(boolean enabled) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setCyberScan(enabled).buildPacket()); } catch(Exception e){} }
+    public void setAutoMode(boolean enabled) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setAutoMode(enabled).buildPacket()); } catch(Exception e){} }
+    public void setSubStep(int code) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setSubStep(code).buildPacket()); } catch(Exception e){} }
+    public void setDtmf(boolean enabled) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setDtmf(enabled).buildPacket()); } catch(Exception e){} }
+    public void setToneElim(int value) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setToneElim(value).buildPacket()); } catch(Exception e){} }
+    public void setScramble(int code) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setScramble(code).buildPacket()); } catch(Exception e){} }
+    public void setManualTune(boolean manual) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setManualTune(manual).buildPacket()); } catch(Exception e){} }
+    public void setTuneSelect(int value) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setTuneSelect(value).buildPacket()); } catch(Exception e){} }
+    public void setLevelSq(int level) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setLevelSq(level).buildPacket()); } catch(Exception e){} }
+    public void setVoiceLevel(int level) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setVoiceLevel(level).buildPacket()); } catch(Exception e){} }
+    public void setDelayTime(float seconds) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setDelayTime(seconds).buildPacket()); } catch(Exception e){} }
+    public void setSearchBank(int bank) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setSearchBank(bank).buildPacket()); } catch(Exception e){} }
+    public void setSearchText(String text) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setSearchText(text).buildPacket()); } catch(Exception e){} }
+    public void deleteSearchWithPass() { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.deleteSearchWithPass().buildPacket()); } catch(Exception e){} }
+    public void setSearchLinkGroup(int group) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setSearchLinkGroup(group).buildPacket()); } catch(Exception e){} }
+    public void setSearchLink(boolean enabled) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setSearchLink(enabled).buildPacket()); } catch(Exception e){} }
+    public void setSearchLinkBank(int bank) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setSearchLinkBank(bank).buildPacket()); } catch(Exception e){} }
+    public void setAutoStore(int mode) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setAutoStore(mode).buildPacket()); } catch(Exception e){} }
+    public void setLevelScan(int level) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setLevelScan(level).buildPacket()); } catch(Exception e){} }
+    public void setVoiceScan(int level) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setVoiceScan(level).buildPacket()); } catch(Exception e){} }
+    public void setSearchDelay(float seconds) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setSearchDelay(seconds).buildPacket()); } catch(Exception e){} }
+    public void setSearchPause(int seconds) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setSearchPause(seconds).buildPacket()); } catch(Exception e){} }
+    public void startVfoSearch(String vfoId) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.startVfoSearch(vfoId).buildPacket()); } catch(Exception e){} }
+    public void setPassFreq(long freqHz) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setPassFreq(freqHz).buildPacket()); } catch(Exception e){} }
+    public void setPassFreqCurrent() { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setPassFreqCurrent().buildPacket()); } catch(Exception e){} }
+    public void deletePassFreq(int bank, int ch) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.deletePassFreq(bank, ch).buildPacket()); } catch(Exception e){} }
+    public void setMemoryPass(int ch, boolean enabled) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setMemoryPass(ch, enabled).buildPacket()); } catch(Exception e){} }
+    public void setMemorySelect(int ch, boolean enabled) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setMemorySelect(ch, enabled).buildPacket()); } catch(Exception e){} }
+    public void setMemoryLinkGroup(int group) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setMemoryLinkGroup(group).buildPacket()); } catch(Exception e){} }
+    public void setMemoryLink(boolean enabled) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setMemoryLink(enabled).buildPacket()); } catch(Exception e){} }
+    public void setMemoryScanLinkBank(int bank) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setMemoryScanLinkBank(bank).buildPacket()); } catch(Exception e){} }
+    public void setModeScan(int mode) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setModeScan(mode).buildPacket()); } catch(Exception e){} }
+    public void setMemoryLevelScan(int level) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setMemoryLevelScan(level).buildPacket()); } catch(Exception e){} }
+    public void setMemoryVoiceScan(int level) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setMemoryVoiceScan(level).buildPacket()); } catch(Exception e){} }
+    public void setMemoryScanDelay(float seconds) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setMemoryScanDelay(seconds).buildPacket()); } catch(Exception e){} }
+    public void setMemoryScanPause(int seconds) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setMemoryScanPause(seconds).buildPacket()); } catch(Exception e){} }
+    public void startSelScan() { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.startSelScan().buildPacket()); } catch(Exception e){} }
+    public void setMemoryChannelMode(int bank, int ch) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setMemoryChannelMode(bank, ch).buildPacket()); } catch(Exception e){} }
+    public void setAfc(boolean enabled) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setAfc(enabled).buildPacket()); } catch(Exception e){} }
+    public void getPromData() { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.getPromData().buildPacket()); } catch(Exception e){} }
+    public void setDeEmphasis(int mode) { if(transport!=null && transport.isConnected()) try{ transport.write(CommandFactory.setDeEmphasis(mode).buildPacket()); } catch(Exception e){} }
 }
