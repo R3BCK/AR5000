@@ -13,6 +13,12 @@
     <!-- Notifications for priority alerts -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
+    <!-- Storage permissions for export to Downloads folder (Android 9 and below) -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28"/>
+
     <!-- Optional USB accessory library (for some devices) -->
     <!-- <uses-library android:name="com.android.future.usb.accessory" android:required="false"/> -->
 
@@ -20,7 +26,8 @@
         android:allowBackup="true"
         android:label="AR5000 Ctrl"
         android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
-        android:hardwareAccelerated="true">
+        android:hardwareAccelerated="true"
+        android:requestLegacyExternalStorage="true">
 
         <!-- ========== MainActivity ========== -->
         <activity

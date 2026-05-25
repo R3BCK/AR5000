@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.ar5000.core.protocol.CommandFactory;
+import com.ar5000.core.transport.Transport;
 import java.io.IOException;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -73,9 +74,6 @@ public class SettingsActivity extends AppCompatActivity {
         seekTE.setProgress(teVal);
         txtTE.setText(teVal == 0 ? "OFF" : String.valueOf(teVal));
 
-        //CheckBox cbNb = findViewById(R.id.cbNoiseBlanker);
-        //cbNb.setChecked(prefs.getBoolean("nbOn", false));
-
         Spinner spLamp = findViewById(R.id.spinnerLamp);
         ArrayAdapter<String> lampAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"ON", "OFF"});
         lampAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -88,7 +86,7 @@ public class SettingsActivity extends AppCompatActivity {
         seekBeep.setProgress(beepVal);
         txtBeep.setText(String.valueOf(beepVal));
 
-        // --- LISTENERS (FIXED: Anonymous classes instead of lambdas) ---
+        // --- LISTENERS ---
 
         seekBeep.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override public void onProgressChanged(SeekBar sb, int val, boolean from) {
@@ -108,7 +106,6 @@ public class SettingsActivity extends AppCompatActivity {
             @Override public void onStopTrackingTouch(SeekBar sb) {}
         });
 
-        // FIX: Standard anonymous inner classes for Spinners
         spAnt.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 String val = pos < 4 ? String.valueOf(pos + 1) : "AUTO";
@@ -126,15 +123,8 @@ public class SettingsActivity extends AppCompatActivity {
             @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        // [FIXED] spBaud: setBaud() removed - "BS" is for Search-Link Bank, not baud rate
-        // spBaud.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-        //     @Override public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-        //         int rate = Integer.parseInt(spBaud.getItemAtPosition(pos).toString());
-        //         sendCommand(CommandFactory.setBaud(rate));
-        //         prefs.edit().putString("baud", String.valueOf(rate)).apply();
-        //     }
-        //     @Override public void onNothingSelected(AdapterView<?> parent) {}
-        // });
+        // [FIXED] spBaud: setBaud() removed - "BS" is for Search-Link Bank
+        // spBaud.setOnItemSelectedListener(...);
 
         spDtmf.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -145,20 +135,8 @@ public class SettingsActivity extends AppCompatActivity {
             @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        // [FIXED] spLamp: setLamp() removed - "LM" is for AGC level, not lamp control
-        // spLamp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-        //     @Override public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-        //         boolean on = pos == 0;
-        //         sendCommand(CommandFactory.setLamp(on));
-        //         prefs.edit().putBoolean("lampOn", on).apply();
-        //     }
-        //     @Override public void onNothingSelected(AdapterView<?> parent) {}
-        // });
-
-/*        cbNb.setOnCheckedChangeListener((btn, isChecked) -> {
-            sendCommand(CommandFactory.setNoiseBlanker(isChecked));
-            prefs.edit().putBoolean("nbOn", isChecked).apply();
-        });*/
+        // [FIXED] spLamp: setLamp() removed - "LM" is for AGC level
+        // spLamp.setOnItemSelectedListener(...);
 
         findViewById(R.id.btnSaveSettings).setOnClickListener(v -> {
             SharedPreferences.Editor e = prefs.edit();
@@ -171,10 +149,13 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
+    // [FIXED] Используем геттер вместо прямого доступа к приватному полю
     private void sendCommand(Object cmdObj) {
-        if (MainActivity.transport != null && MainActivity.transport.isConnected()) {
+        Transport transport = MainActivity.getTransport();
+
+        if (transport != null && transport.isConnected()) {
             try {
-                MainActivity.transport.write(((com.ar5000.core.protocol.Ar5000Command) cmdObj).buildPacket());
+                transport.write(((com.ar5000.core.protocol.Ar5000Command) cmdObj).buildPacket());
             } catch (IOException e) {
                 e.printStackTrace();
             }
