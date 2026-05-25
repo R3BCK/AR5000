@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- USB Host support (required for direct USB connection) -->
+    <uses-feature android:name="android.hardware.usb.host" android:required="true"/>
+
+    <!-- USB permission for device access -->
+    <uses-permission android:name="android.permission.USB_PERMISSION"/>
+
+    <!-- Network permissions for WiFi/ESP32 mode -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- Notifications for priority alerts -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+    <!-- Optional USB accessory library (for some devices) -->
+    <!-- <uses-library android:name="com.android.future.usb.accessory" android:required="false"/> -->
+
+    <application
+        android:allowBackup="true"
+        android:label="AR5000 Ctrl"
+        android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+        android:hardwareAccelerated="true">
+
+        <!-- ========== MainActivity ========== -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:configChanges="orientation|screenSize">
+
+            <!-- Launcher intent -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
+            <!-- USB device auto-detection: CH340 (QinHeng) -->
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/usb_device_filter"/>
+
+        </activity>
+
+        <!-- ========== SettingsActivity ========== -->
+        <activity
+            android:name=".SettingsActivity"
+            android:label="Settings"
+            android:exported="false"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity"/>
+        </activity>
+
+    </application>
+</manifest>

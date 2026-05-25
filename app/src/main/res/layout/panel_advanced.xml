@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:padding="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Title -->
+        <TextView
+            android:text="Advanced Controls"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#111111"
+            android:layout_marginBottom="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- 1. Step Tuning -->
+        <TextView android:text="Step Tuning" android:textColor="#111111" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <Spinner android:id="@+id/spinnerStep" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="#EEEEEE" android:padding="8dp" android:layout_marginBottom="8dp"/>
+
+        <!-- 2. Attenuator -->
+        <TextView android:text="Attenuator" android:textColor="#111111" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <Spinner android:id="@+id/spinnerAtt" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="#EEEEEE" android:padding="8dp" android:layout_marginBottom="8dp"/>
+
+        <!-- 3. RF Gain -->
+        <TextView android:text="RF Gain" android:textColor="#111111" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <SeekBar android:id="@+id/sliderRfGain" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="255" android:progress="128" android:layout_marginBottom="8dp"/>
+        <TextView android:id="@+id/txtRfGain" android:text="128" android:textColor="#111111" android:textSize="10sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="8dp"/>
+
+        <!-- 4. AGC -->
+        <TextView android:text="AGC Mode" android:textColor="#111111" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <Spinner android:id="@+id/spinnerAgc" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="#EEEEEE" android:padding="8dp" android:layout_marginBottom="8dp"/>
+
+        <!-- 5. Noise Blanker -->
+        <TextView android:text="Noise Blanker" android:textColor="#111111" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <Spinner android:id="@+id/spinnerNb" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="#EEEEEE" android:padding="8dp" android:layout_marginBottom="8dp"/>
+
+        <!-- 6. IF Shift -->
+        <TextView android:text="IF Shift (Hz)" android:textColor="#111111" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <SeekBar android:id="@+id/sliderIfShift" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="6000" android:progress="3000" android:layout_marginBottom="8dp"/>
+        <TextView android:id="@+id/txtIfShift" android:text="0 Hz" android:textColor="#111111" android:textSize="10sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="8dp"/>
+
+        <!-- 6b/c. HPF/LPF -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                <TextView android:text="HPF" android:textColor="#111111" android:textSize="10sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spinnerHpf" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="#EEEEEE" android:padding="4dp"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="8dp">
+                <TextView android:text="LPF" android:textColor="#111111" android:textSize="10sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spinnerLpf" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="#EEEEEE" android:padding="4dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 7. Search Limits -->
+        <TextView android:text="Search Limits (Hz)" android:textColor="#111111" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/editSearchLow" android:hint="Lower limit" android:inputType="number" android:background="#EEEEEE" android:padding="8dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="4dp"/>
+        <EditText android:id="@+id/editSearchHigh" android:hint="Upper limit" android:inputType="number" android:background="#EEEEEE" android:padding="8dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp"/>
+
+        <!-- 8. CTCSS/DCS -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                <TextView android:text="CTCSS" android:textColor="#111111" android:textSize="10sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spinnerCtcss" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="#EEEEEE" android:padding="4dp"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="8dp">
+                <TextView android:text="DCS" android:textColor="#111111" android:textSize="10sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spinnerDcs" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="#EEEEEE" android:padding="4dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 10. LCD Text -->
+        <TextView android:text="LCD Text (16 chars max)" android:textColor="#111111" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/editLcdText" android:hint="Enter text" android:maxLength="16" android:background="#EEEEEE" android:padding="8dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp"/>
+
+        <!-- 11. Offset Tuning -->
+        <TextView android:text="Offset Tuning (Hz)" android:textColor="#111111" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/editOffset" android:hint="+/- Hz" android:inputType="numberSigned" android:background="#EEEEEE" android:padding="8dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp"/>
+
+        <!-- Action buttons -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <Button android:id="@+id/btnApplyAdvanced" android:text="Apply All" android:background="#2196F3" android:textColor="#FFFFFF" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
+            <Button android:id="@+id/btnResetAdvanced" android:text="Reset" android:background="#F44336" android:textColor="#FFFFFF" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

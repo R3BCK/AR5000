@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- SECTION 1: CONNECTION -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Connection"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#111111"
+            android:layout_marginBottom="8dp"/>
+
+        <RadioGroup
+            android:id="@+id/transportType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <RadioButton
+                android:id="@+id/typeIp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="WiFi / ESP32"
+                android:checked="true"
+                android:textColor="#111111"
+                android:textSize="14sp"/>
+
+            <RadioButton
+                android:id="@+id/typeUsb"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="USB / CH340G"
+                android:textColor="#111111"
+                android:textSize="14sp"/>
+        </RadioGroup>
+
+        <EditText
+            android:id="@+id/etIp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="IP Address"
+            android:inputType="text"
+            android:background="#FFFFFF"
+            android:padding="12dp"
+            android:textColor="#000000"
+            android:textColorHint="#888888"
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/etPort"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Port"
+            android:inputType="number"
+            android:background="#FFFFFF"
+            android:padding="12dp"
+            android:textColor="#000000"
+            android:textColorHint="#888888"
+            android:textSize="14sp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- SECTION 2: RECEIVER CONFIG -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Receiver Config"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#111111"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Baud Rate -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Baud Rate (RS232)"
+            android:textSize="14sp"
+            android:textColor="#111111"
+            android:layout_marginBottom="4dp"/>
+
+        <Spinner
+            android:id="@+id/spinnerBaud"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:padding="8dp"
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Warning: Changing baud rate requires restart!"
+            android:textSize="12sp"
+            android:textColor="#FF5722"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Antenna Selection -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Antenna Select"
+            android:textSize="14sp"
+            android:textColor="#111111"
+            android:layout_marginBottom="4dp"/>
+
+        <Spinner
+            android:id="@+id/spinnerAnt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:padding="8dp"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- External IF Output (SDU5000) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="IF Output (10.7 MHz)"
+            android:textSize="14sp"
+            android:textColor="#111111"
+            android:layout_marginBottom="4dp"/>
+
+        <Spinner
+            android:id="@+id/spinnerExtIf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:padding="8dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- MUTE Terminal Info -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="#FFFFFF"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="[i]"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#111111"
+                android:layout_marginEnd="12dp"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MUTE Terminal"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#111111"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hardware-only feature. Requires cutting internal yellow jumper and using shorting plug. No RS232 command exists."
+                    android:textSize="12sp"
+                    android:textColor="#666666"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- SECTION 3: OPTIONS -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Options"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#111111"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- DTMF -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DTMF Display"
+            android:textSize="14sp"
+            android:textColor="#111111"
+            android:layout_marginBottom="4dp"/>
+
+        <Spinner
+            android:id="@+id/spinnerDtmf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:padding="8dp"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Tone Eliminator -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tone Eliminator (T-ELMT)"
+            android:textSize="14sp"
+            android:textColor="#111111"
+            android:layout_marginBottom="4dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
+
+            <SeekBar
+                android:id="@+id/seekBarTE"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="255"
+                android:progress="0"/>
+
+            <TextView
+                android:id="@+id/txtTEVal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OFF"
+                android:textSize="14sp"
+                android:textColor="#111111"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+        <!-- Lamp Beep -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LCD Backlight"
+            android:textSize="14sp"
+            android:textColor="#111111"
+            android:layout_marginBottom="4dp"/>
+
+        <Spinner
+            android:id="@+id/spinnerLamp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:padding="8dp"
+            android:layout_marginBottom="12dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Beep Volume"
+            android:textSize="14sp"
+            android:textColor="#111111"
+            android:layout_marginBottom="4dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+
+            <SeekBar
+                android:id="@+id/seekBarBeep"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="255"
+                android:progress="100"/>
+
+            <TextView
+                android:id="@+id/txtBeepVal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100"
+                android:textSize="14sp"
+                android:textColor="#111111"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+        <!-- SAVE BUTTON -->
+        <Button
+            android:id="@+id/btnSaveSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save and Apply"
+            android:textSize="14sp"
+            android:textColor="#FFFFFF"
+            android:background="#2196F3"
+            android:padding="12dp"/>
+
+    </LinearLayout>
+</ScrollView>

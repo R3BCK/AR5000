@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#0a0a0a"
+    android:padding="12dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LUA SCRIPT EDITOR"
+        android:textColor="#aa44ff"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_marginBottom="8dp"/>
+
+    <Spinner android:id="@+id/scriptSelector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#1a002a"
+        android:padding="8dp"
+        android:layout_marginBottom="8dp"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#000000"
+        android:padding="8dp">
+
+        <EditText android:id="@+id/luaCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="-- Enter Lua code here"
+            android:textColor="#aa44ff"
+            android:textColorHint="#440066"
+            android:background="#000000"
+            android:fontFamily="monospace"
+            android:textSize="12sp"
+            android:minLines="10"
+            android:gravity="top"
+            android:inputType="textMultiLine"/>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <Button android:id="@+id/btnSaveScript"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="SAVE"
+            android:background="#1a002a"
+            android:textColor="#aa44ff"/>
+
+        <Button android:id="@+id/btnRunScript"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="RUN"
+            android:background="#002a00"
+            android:textColor="#00ff00"/>
+
+        <Button android:id="@+id/btnStopScript"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="STOP"
+            android:background="#2a0000"
+            android:textColor="#ff4444"/>
+    </LinearLayout>
+</LinearLayout>

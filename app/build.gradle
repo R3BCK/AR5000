@@ -1,0 +1,41 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.ar5000.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.ar5000.app"
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+    implementation project(':common')
+    implementation project(':ar5000-core')
+    implementation project(':audio-cm108')
+    implementation project(':script-lua')
+
+    implementation 'com.github.mik3y:usb-serial-for-android:3.5.1'
+    implementation 'com.github.wendykierp:JTransforms:3.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.6.2'
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+}

@@ -1,0 +1,44 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+# Build files
+/build/
+*/build/
+*.apk
+*.aab
+*.jar
+
+# Gradle
+.gradle/
+local.properties
+*.iml
+*.hprof
+
+# Android Studio / IntelliJ
+.idea/
+*.ipr
+*.iws
+*.log
+
+# Keystores & secrets
+**/*.jks
+**/*.keystore
+**/signing.properties
+**/google-services.json
+
+# System files
+.DS_Store
+Thumbs.db
+*.bat

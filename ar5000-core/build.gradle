@@ -1,0 +1,24 @@
+//  ar5000-core/build.gradle
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace 'com.ar5000.core'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 26
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+    implementation project(':common')
+    // FIX: Добавляем зависимость на USB-serial драйвер
+    implementation 'com.github.mik3y:usb-serial-for-android:3.4.0'
+}

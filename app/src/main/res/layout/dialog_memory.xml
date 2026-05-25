@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#0a0a0a"
+    android:padding="12dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="MEMORY BANK CONTROL"
+        android:textColor="#ffaa00"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_marginBottom="8dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView android:text="Bank:" android:textColor="#ffaa00" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <Spinner android:id="@+id/bankSelector"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#2a1a00"/>
+
+        <TextView android:text="Ch:" android:textColor="#ffaa00" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="12dp"/>
+        <Spinner android:id="@+id/channelSelector"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#2a1a00"/>
+    </LinearLayout>
+
+    <EditText android:id="@+id/memFreq"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Frequency Hz"
+        android:textColor="#ffaa00"
+        android:background="#1a1a00"
+        android:padding="8dp"
+        android:inputType="number"
+        android:layout_marginTop="8dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <Button android:id="@+id/btnReadMem"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="READ"
+            android:background="#2a1a00"
+            android:textColor="#ffaa00"/>
+
+        <Button android:id="@+id/btnWriteMem"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="WRITE"
+            android:background="#002a00"
+            android:textColor="#00ff00"/>
+
+        <Button android:id="@+id/btnClearMem"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="CLEAR"
+            android:background="#2a0000"
+            android:textColor="#ff4444"/>
+    </LinearLayout>
+
+    <TextView android:id="@+id/memStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ready"
+        android:textColor="#888888"
+        android:textSize="10sp"
+        android:layout_marginTop="8dp"/>
+
+    <Button android:id="@+id/btnExportCsv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="EXPORT TO CSV"
+        android:background="#1a1a2e"
+        android:textColor="#88aaff"
+        android:layout_marginTop="8dp"/>
+</LinearLayout>

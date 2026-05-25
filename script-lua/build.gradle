@@ -1,0 +1,25 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace 'com.ar5000.script'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 26
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+    implementation project(':common')
+    // FIX: Добавлены зависимости на модули core и audio
+    implementation project(':ar5000-core')
+    implementation project(':audio-cm108')
+    implementation 'org.luaj:luaj-jse:3.0.1'
+}

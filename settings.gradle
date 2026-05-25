@@ -1,0 +1,21 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+// FIX:dependencyResolutionManagement — здесь указываются репозитории для ВСЕХ модулей
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        // FIX: JitPack для usb-serial-for-android
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+rootProject.name = "AOR AR5000"
+include ':app', ':common', ':ar5000-core', ':audio-cm108', ':script-lua'
