@@ -101,11 +101,7 @@ public class MainActivity extends AppCompatActivity implements Ar5000Controller.
             Intent intent = new Intent(MainActivity.this, SpectrumActivity.class);
             startActivity(intent);
         });
-        Button btnSpectrum = findViewById(R.id.btnSpectrum);
-        btnSpectrum.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, SpectrumActivity.class);
-            startActivity(intent);
-        });
+
 
         // Bank spinner: 0-9
         String[] banks = new String[10];
