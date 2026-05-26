@@ -11,17 +11,19 @@ import java.util.Arrays;
  * Потокобезопасность: используйте copy() для передачи в UI-поток.
  *
  * Встроенная поддержка памяти: 10 банков × 100 каналов.
+ * Встроенная поддержка всех 5 VFO (A-E): частота, режим, полоса, шаг.
  * Методы: getMemoryChannel(), setMemoryChannel(), isMemoryLoaded(), resetMemoryBank()
+ * Методы для VFO: getVfoState(), getAllVfoStates(), updateVfoFromResponse()
  */
 public class ReceiverState {
 
-    // ===== CORE STATE (from RX dump) =====
-    private String vfo = "A";                    // VFO: A/B/C/D/E
-    private long frequencyHz = 145_000_000L;     // RF: частота в Гц
-    private long stepHz = 5000L;                 // ST: шаг в Гц
+    // ===== CORE STATE (from RX dump - active VFO only) =====
+    private String vfo = "A";                    // VFO: A/B/C/D/E (активный)
+    private long frequencyHz = 145_000_000L;     // RF: частота в Гц (активный VFO)
+    private long stepHz = 5000L;                 // ST: шаг в Гц (активный VFO)
     private boolean autoMode = false;            // AU: 0=OFF, 1=ON
-    private int modeCode = Ar5000Protocol.MODE_FM; // MD: 0-4
-    private int bwCode = Ar5000Protocol.BW_AUTO; // BW: полоса пропускания (0-6 или -1=AUTO)
+    private int modeCode = Ar5000Protocol.MODE_FM; // MD: 0-4 (активный VFO)
+    private int bwCode = Ar5000Protocol.BW_AUTO; // BW: полоса пропускания (активный VFO)
     private int attenuator = Ar5000Protocol.ATT_0DB; // AT: 0,1,2,3(AUTO)
     private int antenna = Ar5000Protocol.ANT_AUTO;   // AN: 0-4
     private int squelchLevel = 0;                // RQ: уровень 0-255
@@ -49,11 +51,19 @@ public class ReceiverState {
     private boolean isBusy = false;
 
     // ===== MEMORY STORAGE: 10 banks × 100 channels =====
-    // [ADDED] Массив памяти: банки 0-9, каналы 0-99
-    // Каждый элемент может быть null (канал не загружен) или содержать MemoryChannel
     private final MemoryChannel[][] memoryBanks = new MemoryChannel[10][100];
-    // [ADDED] Флаги: какие банки уже загружены с устройства
     private final boolean[] memoryLoaded = new boolean[10];
+
+    // ===== [ADDED] VFO ARRAY STATE (for all 5 VFOs A-E) =====
+    // Массив состояний для всех 5 VFO: индексы 0='A', 1='B', ..., 4='E'
+    private final VfoState[] vfoStates = new VfoState[5];
+
+    // Инициализация массива VFO при создании объекта
+    {
+        for (int i = 0; i < 5; i++) {
+            vfoStates[i] = new VfoState((char) ('A' + i));
+        }
+    }
 
     // ===== GETTERS/SETTERS FOR CORE STATE =====
 
@@ -206,66 +216,105 @@ public class ReceiverState {
         return Ar5000Protocol.getCwPitchName(cwPitchCode);
     }
 
-    // ===== MEMORY OPERATIONS =====
+    // ===== [ADDED] VFO ARRAY ACCESSORS =====
 
     /**
-     * Проверяет, загружен ли банк памяти с устройства.
-     * @param bank индекс банка 0-9
-     * @return true если банк загружен
+     * Получает состояние конкретного VFO (A-E).
+     * @param vfoId буква 'A'..'E' или строка "A".."E"
+     * @return VfoState или null если неверный идентификатор
      */
+    public VfoState getVfoState(Object vfoId) {
+        char id;
+        if (vfoId instanceof String) {
+            String s = (String) vfoId;
+            if (s.isEmpty()) return null;
+            id = Character.toUpperCase(s.charAt(0));
+        } else if (vfoId instanceof Character) {
+            id = Character.toUpperCase((Character) vfoId);
+        } else {
+            return null;
+        }
+        int idx = id - 'A';
+        if (idx >= 0 && idx < 5) return vfoStates[idx];
+        return null;
+    }
+
+    /**
+     * Получает массив состояний всех 5 VFO (копия для потокобезопасности).
+     * @return массив из 5 элементов [A,B,C,D,E]
+     */
+    public VfoState[] getAllVfoStates() {
+        VfoState[] copy = new VfoState[5];
+        for (int i = 0; i < 5; i++) {
+            copy[i] = vfoStates[i].copy();
+        }
+        return copy;
+    }
+
+    /**
+     * Обновляет состояние одного VFO из ответа команды (RX дамп или VxRF).
+     * Создаёт новый неизменяемый экземпляр VfoState и заменяет ссылку в массиве.
+     * @param vfoId буква 'A'..'E'
+     * @param freq частота в Гц (или -1 чтобы не менять)
+     * @param mode код режима 0-4 (или -1 чтобы не менять)
+     * @param bw код полосы 0-6 или -1 (или -1 чтобы не менять)
+     * @param step шаг в Гц (или -1 чтобы не менять)
+     */
+    public void updateVfoFromResponse(String vfoId, long freq, int mode, int bw, long step) {
+        int idx = -1;
+        if (vfoId != null && !vfoId.isEmpty()) {
+            idx = Character.toUpperCase(vfoId.charAt(0)) - 'A';
+        }
+        if (idx < 0 || idx >= 5) return;
+
+        VfoState current = vfoStates[idx];
+
+        // Используем текущие значения, если новые не переданы (-1)
+        long newFreq = (freq >= 0) ? freq : current.frequencyHz;
+        int newMode = (mode >= 0 && Ar5000Protocol.isValidMode(mode)) ? mode : current.modeCode;
+        int newBw = (bw >= 0 && Ar5000Protocol.isValidBw(bw)) ? bw : current.bwCode;
+        long newStep = (step >= 0) ? step : current.stepHz;
+
+        // Создаём новый неизменяемый экземпляр и заменяем ссылку
+        vfoStates[idx] = new VfoState(current.id, newFreq, newMode, newBw, newStep);
+
+        // Если это активный VFO — обновляем также "текущее" состояние для обратной совместимости
+        if (vfoId != null && vfoId.equalsIgnoreCase(this.vfo)) {
+            setFrequencyHz(newFreq);
+            setModeCode(newMode);
+            setBwCode(newBw);
+            setStepHz(newStep);
+        }
+    }
+
+    // ===== MEMORY OPERATIONS =====
+
     public boolean isMemoryLoaded(int bank) {
         if (bank < 0 || bank > 9) return false;
         return memoryLoaded[bank];
     }
 
-    /**
-     * Получает данные канала из памяти.
-     * @param bank индекс банка 0-9
-     * @param channel индекс канала 0-99
-     * @return MemoryChannel или null если канал пуст/не загружен
-     */
     public MemoryChannel getMemoryChannel(int bank, int channel) {
         if (bank < 0 || bank > 9 || channel < 0 || channel > 99) return null;
         return memoryBanks[bank][channel];
     }
 
-    /**
-     * Обновляет данные канала в памяти (локально).
-     * Для сохранения на устройстве используйте CommandFactory.writeMemory() + отправку.
-     * @param bank индекс банка 0-9
-     * @param channel индекс канала 0-99
-     * @param data новые данные канала или null для очистки
-     */
     public void setMemoryChannel(int bank, int channel, MemoryChannel data) {
         if (bank < 0 || bank > 9 || channel < 0 || channel > 99) return;
         memoryBanks[bank][channel] = data;
         if (data != null) memoryLoaded[bank] = true;
     }
 
-    /**
-     * Очищает все каналы в указанном банке (локально).
-     * Для удаления на устройстве используйте CommandFactory.clearMemory() или deleteMemoryChannel().
-     * @param bank индекс банка 0-9
-     */
     public void resetMemoryBank(int bank) {
         if (bank < 0 || bank > 9) return;
         Arrays.fill(memoryBanks[bank], null);
         memoryLoaded[bank] = false;
     }
 
-    /**
-     * Помечает банк как загруженный (вызывается после успешного чтения всех каналов).
-     * @param bank индекс банка 0-9
-     */
     public void markMemoryLoaded(int bank) {
         if (bank >= 0 && bank <= 9) memoryLoaded[bank] = true;
     }
 
-    /**
-     * Возвращает количество загруженных каналов в банке.
-     * @param bank индекс банка 0-9
-     * @return число от 0 до 100
-     */
     public int getLoadedChannelCount(int bank) {
         if (bank < 0 || bank > 9) return 0;
         int count = 0;
@@ -309,12 +358,16 @@ public class ReceiverState {
         // Flags
         c.isRemoteMode = this.isRemoteMode;
         c.isBusy = this.isBusy;
-        // Memory: shallow copy of arrays (MemoryChannel is immutable)
+        // Memory: shallow copy (MemoryChannel is immutable)
         for (int b = 0; b < 10; b++) {
             c.memoryLoaded[b] = this.memoryLoaded[b];
             for (int ch = 0; ch < 100; ch++) {
                 c.memoryBanks[b][ch] = this.memoryBanks[b][ch];
             }
+        }
+        // VFO states: copy references (VfoState is immutable)
+        for (int i = 0; i < 5; i++) {
+            c.vfoStates[i] = this.vfoStates[i];
         }
         return c;
     }
@@ -354,6 +407,94 @@ public class ReceiverState {
             Arrays.fill(memoryBanks[b], null);
             memoryLoaded[b] = false;
         }
+        // Reset VFO states
+        for (int i = 0; i < 5; i++) {
+            vfoStates[i] = new VfoState((char) ('A' + i));
+        }
+    }
+
+    // ===== INNER CLASS: VfoState =====
+
+    /**
+     * Состояние одного VFO (A-E).
+     * Содержит только те параметры, которые возвращаются командами чтения.
+     * Неизменяемый после создания — для обновления создаётся новый экземпляр.
+     */
+    public static final class VfoState {
+        public final char id;              // 'A'..'E'
+        public final long frequencyHz;
+        public final int modeCode;
+        public final int bwCode;
+        public final long stepHz;
+
+        public VfoState(char id) {
+            this(id, 145_000_000L, Ar5000Protocol.MODE_FM, Ar5000Protocol.BW_AUTO, 5000L);
+        }
+
+        public VfoState(char id, long freq, int mode, int bw, long step) {
+            if (id < 'A' || id > 'E') {
+                throw new IllegalArgumentException("VFO ID must be A-E");
+            }
+            this.id = id;
+            this.frequencyHz = freq;
+            this.modeCode = Ar5000Protocol.isValidMode(mode) ? mode : Ar5000Protocol.MODE_FM;
+            this.bwCode = Ar5000Protocol.isValidBw(bw) ? bw : Ar5000Protocol.BW_AUTO;
+            this.stepHz = step > 0 ? step : 5000L;
+        }
+
+        public String getId() { return String.valueOf(id); }
+
+        public String getFrequencyMhzString() {
+            long mhz = frequencyHz / 1_000_000;
+            long khz = (frequencyHz / 1000) % 1000;
+            long hz = frequencyHz % 1000;
+            return String.format("%d.%03d.%03d", mhz, khz, hz);
+        }
+
+        public String getModeString() { return Ar5000Protocol.getModeName(modeCode); }
+        public String getBwString() { return Ar5000Protocol.getBwName(bwCode); }
+        public String getStepString() { return stepHz + " Hz"; }
+
+        /**
+         * Создаёт копию состояния (для потокобезопасности).
+         * Для неизменяемого класса это просто возврат this, но оставляем для совместимости.
+         */
+        public VfoState copy() {
+            return this; // immutable, no need to clone
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof VfoState)) return false;
+            VfoState that = (VfoState) o;
+            return id == that.id &&
+                    frequencyHz == that.frequencyHz &&
+                    modeCode == that.modeCode &&
+                    bwCode == that.bwCode &&
+                    stepHz == that.stepHz;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = id;
+            result = 31 * result + (int) (frequencyHz ^ (frequencyHz >>> 32));
+            result = 31 * result + modeCode;
+            result = 31 * result + bwCode;
+            result = 31 * result + (int) (stepHz ^ (stepHz >>> 32));
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "VfoState{" +
+                    "id=" + id +
+                    ", freq=" + getFrequencyMhzString() +
+                    ", mode=" + getModeString() +
+                    ", bw=" + getBwString() +
+                    ", step=" + stepHz + "Hz" +
+                    '}';
+        }
     }
 
     // ===== INNER CLASS: MemoryChannel =====
@@ -382,17 +523,14 @@ public class ReceiverState {
             this.isEmpty = (freq == 0 && mode == 0 && bw == 0 && (memo == null || memo.isEmpty()));
         }
 
-        // Factory для пустого канала
         public static MemoryChannel empty(int index) {
             return new MemoryChannel(index, 0, 0, 0, "");
         }
 
-        // Factory для канала с данными (из команды MA)
         public static MemoryChannel fromData(int index, long freq, int mode, int bw, String memo) {
             return new MemoryChannel(index, freq, mode, bw, memo);
         }
 
-        // String converters
         public String getFrequencyMhzString() {
             if (isEmpty) return "---.---.---";
             long mhz = frequencyHz / 1_000_000;
@@ -413,7 +551,6 @@ public class ReceiverState {
             return memoText != null ? memoText : "";
         }
 
-        // Builder для обновления (возвращает новый экземпляр)
         public MemoryChannel withFrequency(long freq) {
             return new MemoryChannel(index, freq, modeCode, bwCode, memoText);
         }

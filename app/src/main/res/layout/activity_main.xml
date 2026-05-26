@@ -97,5 +97,16 @@
             android:padding="4dp"
             android:textIsSelectable="true"/>
 
+        <Button
+            android:id="@+id/btnStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Device Status"/>
+        <Button
+            android:id="@+id/btnControlPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Control Panel"/>
+
     </LinearLayout>
 </ScrollView>

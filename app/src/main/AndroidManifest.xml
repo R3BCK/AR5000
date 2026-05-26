@@ -63,5 +63,27 @@
                 android:value=".MainActivity"/>
         </activity>
 
+        <!-- ========== DeviceStatusActivity ========== -->
+        <activity
+            android:name=".DeviceStatusActivity"
+            android:label="Device Status"
+            android:exported="false"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity"/>
+        </activity>
+
+        <!-- В <application>, после SettingsActivity -->
+        <activity
+            android:name=".ControlPanelActivity"
+            android:label="Control Panel"
+            android:exported="false"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity"/>
+        </activity>
+
     </application>
 </manifest>

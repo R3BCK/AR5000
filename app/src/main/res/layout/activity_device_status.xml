@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Header -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Device Status"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp"/>
+
+        <!-- Refresh button -->
+        <Button
+            android:id="@+id/btnRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Refresh All"/>
+
+        <!-- Core State Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Core State (Active VFO)"
+            android:textStyle="bold"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"/>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow>
+                <TextView android:text="VFO:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvVfo" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Frequency:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvFrequency" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Mode:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvMode" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Bandwidth:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvBandwidth" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Step:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvStep" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Attenuator:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvAttenuator" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Antenna:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvAntenna" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Squelch:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvSquelch" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="AGC Level:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvAgcLevel" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Signal:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvSignal" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Memo:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvMemo" android:padding="2dp"/>
+            </TableRow>
+        </TableLayout>
+
+        <!-- [ADDED] All VFOs Section (A-E) -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="All VFOs (A-E)"
+            android:textStyle="bold"
+            android:paddingTop="12dp"
+            android:paddingBottom="4dp"/>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1,2,3"
+            android:background="#ffeeeeee"
+            android:padding="2dp">
+
+            <!-- Header row -->
+            <TableRow android:background="#ffdddddd">
+                <TextView android:text="VFO" android:textStyle="bold" android:gravity="center" android:padding="4dp"/>
+                <TextView android:text="Frequency" android:textStyle="bold" android:gravity="center" android:padding="4dp"/>
+                <TextView android:text="Mode" android:textStyle="bold" android:gravity="center" android:padding="4dp"/>
+                <TextView android:text="BW" android:textStyle="bold" android:gravity="center" android:padding="4dp"/>
+            </TableRow>
+
+            <!-- VFO A -->
+            <TableRow>
+                <TextView android:id="@+id/tvVfoA_id" android:text="A" android:textStyle="bold" android:gravity="center" android:padding="2dp"/>
+                <TextView android:id="@+id/tvVfoA_freq" android:gravity="center" android:padding="2dp"/>
+                <TextView android:id="@+id/tvVfoA_mode" android:gravity="center" android:padding="2dp"/>
+                <TextView android:id="@+id/tvVfoA_bw" android:gravity="center" android:padding="2dp"/>
+            </TableRow>
+
+            <!-- VFO B -->
+            <TableRow>
+                <TextView android:text="B" android:textStyle="bold" android:gravity="center" android:padding="2dp"/>
+                <TextView android:id="@+id/tvVfoB_freq" android:gravity="center" android:padding="2dp"/>
+                <TextView android:id="@+id/tvVfoB_mode" android:gravity="center" android:padding="2dp"/>
+                <TextView android:id="@+id/tvVfoB_bw" android:gravity="center" android:padding="2dp"/>
+            </TableRow>
+
+            <!-- VFO C -->
+            <TableRow>
+                <TextView android:text="C" android:textStyle="bold" android:gravity="center" android:padding="2dp"/>
+                <TextView android:id="@+id/tvVfoC_freq" android:gravity="center" android:padding="2dp"/>
+                <TextView android:id="@+id/tvVfoC_mode" android:gravity="center" android:padding="2dp"/>
+                <TextView android:id="@+id/tvVfoC_bw" android:gravity="center" android:padding="2dp"/>
+            </TableRow>
+
+            <!-- VFO D -->
+            <TableRow>
+                <TextView android:text="D" android:textStyle="bold" android:gravity="center" android:padding="2dp"/>
+                <TextView android:id="@+id/tvVfoD_freq" android:gravity="center" android:padding="2dp"/>
+                <TextView android:id="@+id/tvVfoD_mode" android:gravity="center" android:padding="2dp"/>
+                <TextView android:id="@+id/tvVfoD_bw" android:gravity="center" android:padding="2dp"/>
+            </TableRow>
+
+            <!-- VFO E -->
+            <TableRow>
+                <TextView android:text="E" android:textStyle="bold" android:gravity="center" android:padding="2dp"/>
+                <TextView android:id="@+id/tvVfoE_freq" android:gravity="center" android:padding="2dp"/>
+                <TextView android:id="@+id/tvVfoE_mode" android:gravity="center" android:padding="2dp"/>
+                <TextView android:id="@+id/tvVfoE_bw" android:gravity="center" android:padding="2dp"/>
+            </TableRow>
+        </TableLayout>
+
+        <!-- Extended State Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Extended State"
+            android:textStyle="bold"
+            android:paddingTop="12dp"
+            android:paddingBottom="4dp"/>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow>
+                <TextView android:text="HPF:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvHpf" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="LPF:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvLpf" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="CW Pitch:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvCwPitch" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="De-emphasis:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvDeEmphasis" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Tune Select:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvTuneSelect" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Level-SQ:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvLevelSq" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Voice Level:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvVoiceLevel" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Delay Time:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvDelayTime" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Cyber-Scan:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvCyberScan" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Manual Tune:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvManualTune" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Firmware:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvFirmware" android:padding="2dp"/>
+            </TableRow>
+        </TableLayout>
+
+        <!-- Memory Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Memory Banks"
+            android:textStyle="bold"
+            android:paddingTop="12dp"
+            android:paddingBottom="4dp"/>
+
+        <LinearLayout
+            android:id="@+id/layoutMemoryBanks"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#ffeeeeee"
+            android:padding="4dp"/>
+
+        <!-- Status Flags -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Status"
+            android:textStyle="bold"
+            android:paddingTop="12dp"
+            android:paddingBottom="4dp"/>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow>
+                <TextView android:text="Remote Mode:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvRemoteMode" android:padding="2dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Busy:" android:padding="2dp"/>
+                <TextView android:id="@+id/tvBusy" android:padding="2dp"/>
+            </TableRow>
+        </TableLayout>
+
+        <!-- Last update timestamp -->
+        <TextView
+            android:id="@+id/tvLastUpdate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Last update: --"
+            android:paddingTop="12dp"
+            android:gravity="center"
+            android:textStyle="italic"/>
+
+    </LinearLayout>
+</ScrollView>

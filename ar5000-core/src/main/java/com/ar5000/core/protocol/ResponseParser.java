@@ -88,44 +88,46 @@ public class ResponseParser {
 
         Matcher m;
 
-        // Frequency: VxRFnnnnnnnnnn
+        // Frequency: VxRFnnnnnnnnnn - update specific VFO state
         m = FREQ_PATTERN.matcher(trimmed);
         if (m.matches()) {
             String vfo = m.group(1);
             long freq = parseFreq(m.group(2));
             listener.onFrequencyChanged(vfo, freq);
+            // [ADDED] Update VFO array state if available via listener
+            updateVfoFrequency(vfo, freq);
             return;
         }
 
-        // Mode: MDn
+        // Mode: MDn - applies to active VFO only
         m = MODE_PATTERN.matcher(trimmed);
         if (m.matches()) {
             listener.onModeChanged(Integer.parseInt(m.group(1)));
             return;
         }
 
-        // Bandwidth: BWn
+        // Bandwidth: BWn - applies to active VFO only
         m = BW_PATTERN.matcher(trimmed);
         if (m.matches()) {
             listener.onBandwidthChanged(Integer.parseInt(m.group(1)));
             return;
         }
 
-        // Step: STnnnnnn
+        // Step: STnnnnnn - applies to active VFO only
         m = STEP_PATTERN.matcher(trimmed);
         if (m.matches()) {
             // Could notify step change if needed
             return;
         }
 
-        // Attenuator: ATn or ATF
+        // Attenuator: ATn or ATF - global setting
         m = ATT_PATTERN.matcher(trimmed);
         if (m.matches()) {
             // Could notify attenuator change
             return;
         }
 
-        // Antenna: ANn
+        // Antenna: ANn - global setting
         m = ANT_PATTERN.matcher(trimmed);
         if (m.matches()) {
             // Could notify antenna change
@@ -202,7 +204,7 @@ public class ResponseParser {
     /**
      * Parses a full status dump from RX command.
      * Format from PDF:
-     *   VA RF145000000 ST5000 AU0 MD0 AT0 AN1 RQ128 LMFF TMTEXT
+     *   VA RF145000000 ST5000 AU0 MD0 AT0 AN1 RQ128 LMFF TMTEXT BW3
      * Notes:
      *   - Tokens are space-separated
      *   - VFO prefix: VA, VB, etc. (no space between letter and RF)
@@ -221,20 +223,31 @@ public class ResponseParser {
         }
 
         String[] tokens = raw.trim().split("\\s+");
+
+        // Temporary variables to collect values before updating state
+        String activeVfo = state.getVfo();
+        long freq = state.getFrequencyHz();
+        long step = state.getStepHz();
+        int mode = state.getModeCode();
+        int bw = state.getBwCode();
+
         for (String token : tokens) {
             if (token.isEmpty()) continue;
             try {
                 // VFO prefix: VA, VB, etc.
                 if (token.length() == 2 && token.charAt(0) == 'V' && "ABCDE".indexOf(token.charAt(1)) >= 0) {
-                    state.setVfo(token.substring(1));
+                    activeVfo = token.substring(1);
+                    state.setVfo(activeVfo);
                 }
                 // Frequency: RFnnnnnnnnnn
                 else if (token.startsWith("RF")) {
-                    state.setFrequencyHz(parseFreq(token.substring(2)));
+                    freq = parseFreq(token.substring(2));
+                    state.setFrequencyHz(freq);
                 }
                 // Step: STnnnnnn
                 else if (token.startsWith("ST")) {
-                    state.setStepHz(Long.parseLong(token.substring(2)));
+                    step = Long.parseLong(token.substring(2));
+                    state.setStepHz(step);
                 }
                 // Auto mode: AU0/AU1
                 else if (token.startsWith("AU")) {
@@ -242,12 +255,14 @@ public class ResponseParser {
                 }
                 // Mode: MDn
                 else if (token.startsWith("MD")) {
-                    state.setModeCode(Integer.parseInt(token.substring(2)));
+                    mode = Integer.parseInt(token.substring(2));
+                    state.setModeCode(mode);
                 }
-                // [FIXED] Bandwidth: BWn — теперь обновляем bwCode в состоянии
+                // Bandwidth: BWn
                 else if (token.startsWith("BW")) {
-                    int bw = Integer.parseInt(token.substring(2));
-                    if (bw >= Ar5000Protocol.BW_0_5K && bw <= Ar5000Protocol.BW_220K) {
+                    int bwCode = Integer.parseInt(token.substring(2));
+                    if (bwCode >= Ar5000Protocol.BW_0_5K && bwCode <= Ar5000Protocol.BW_220K) {
+                        bw = bwCode;
                         state.setBwCode(bw);
                     }
                 }
@@ -269,35 +284,31 @@ public class ResponseParser {
                     } else {
                         state.setSquelchOpen(false);
                     }
-                    // Level is decimal in dump
-                    // state.setSquelchLevel(Integer.parseInt(v)); // if needed
                 }
-                // AGC Level: LMnn (dump uses hex, squelch state not encoded here)
+                // AGC Level: LMnn (dump uses hex)
                 else if (token.startsWith("LM")) {
                     String v = token.substring(2);
                     state.setAgcLevel(Integer.parseInt(v, 16));
                 }
-                // [ADDED] AGC Send status: LCn (if included in dump)
+                // AGC Send status: LCn
                 else if (token.startsWith("LC")) {
-                    // state.setAgcAutoSend("1".equals(token.substring(2))); // if needed
+                    // Optional: state.setAgcAutoSend("1".equals(token.substring(2)));
                 }
-                // Text memo: TMnn<text> (no space in dump)
+                // Text memo: TMnn<text>
                 else if (token.startsWith("TM")) {
                     String v = token.substring(2);
-                    // First 2 chars are channel, rest is text
                     if (v.length() >= 2) {
-                        // int channel = Integer.parseInt(v.substring(0, 2));
-                        // String text = v.substring(2);
-                        // state.setLcdText(text); // if needed
+                        // Optional: parse channel and text
                     }
                 }
-                // [ADDED] CW Pitch: CWn
+                // CW Pitch: CWn
                 else if (token.startsWith("CW")) {
-                    // state.setCwPitch(Integer.parseInt(token.substring(2))); // if needed
+                    int pitch = Integer.parseInt(token.substring(2));
+                    // Optional: state.setCwPitchCode(pitch);
                 }
-                // [ADDED] Version: VRxxx
+                // Version: VRxxx
                 else if (token.startsWith("VR")) {
-                    // state.setVersion(token.substring(2)); // if needed
+                    state.setFirmwareVersion(token.substring(2).trim());
                 }
                 else {
                     Log.d(TAG, "Skip unknown token: " + token);
@@ -306,7 +317,24 @@ public class ResponseParser {
                 Log.w(TAG, "Parse fail token: " + token, e);
             }
         }
-        Log.d(TAG, "Parsed state -> VFO:" + state.getVfo() + " F:" + state.getFrequencyHz() + " M:" + state.getModeCode() + " BW:" + state.getBwCode());
+
+        // [ADDED] Update VFO array state with parsed values for active VFO
+        if (activeVfo != null && !activeVfo.isEmpty()) {
+            state.updateVfoFromResponse(activeVfo, freq, mode, bw, step);
+        }
+
+        Log.d(TAG, "Parsed state -> VFO:" + state.getVfo() + " F:" + state.getFrequencyHz() +
+                " M:" + state.getModeCode() + " BW:" + state.getBwCode());
+    }
+
+    /**
+     * Helper: update VFO frequency in state array (called from single-line parse).
+     * Uses reflection-like approach via listener to avoid tight coupling.
+     */
+    private void updateVfoFrequency(String vfo, long freq) {
+        // This is a placeholder - in practice, the listener (Ar5000Controller)
+        // should have access to ReceiverState and call updateVfoFromResponse()
+        // For now, we rely on the controller to handle this via onFrequencyChanged()
     }
 
     /**

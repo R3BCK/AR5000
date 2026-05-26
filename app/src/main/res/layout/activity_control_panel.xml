@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Header -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Control Panel"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp"/>
+
+        <!-- Connection status -->
+        <TextView
+            android:id="@+id/tvConnStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Disconnected"
+            android:textStyle="italic"
+            android:paddingBottom="4dp"/>
+
+        <!-- ===== CONNECTION &amp; TRANSPORT ===== -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Connection &amp; Transport"
+            android:textStyle="bold"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"/>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow>
+                <TextView android:text="Type:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spTransportType" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="IP Address:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <EditText android:id="@+id/etIp" android:inputType="text"
+                    android:hint="192.168.1.100" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Port:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <EditText android:id="@+id/etPort" android:inputType="number"
+                    android:hint="2323" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Baud Rate:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spBaud" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Button android:id="@+id/btnApplyConn" android:text="Save &amp; Reconnect" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+        </TableLayout>
+
+        <!-- ===== LUA SCRIPTS ===== -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Lua Scripts"
+            android:textStyle="bold"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp">
+
+            <Spinner android:id="@+id/spLuaScripts" android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="4dp"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3"
+                android:paddingTop="4dp">
+
+                <Button android:id="@+id/btnLoadLua" android:text="Load" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"/>
+                <Button android:id="@+id/btnRunLua" android:text="Run" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"/>
+                <Button android:id="@+id/btnStopLua" android:text="Stop" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvLuaLog"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_marginTop="4dp"
+                android:background="#ff1a1a1a"
+                android:textColor="#ff00ff00"
+                android:fontFamily="monospace"
+                android:scrollbars="vertical"
+                android:padding="4dp"
+                android:textSize="10sp"
+                android:textIsSelectable="true"/>
+        </LinearLayout>
+
+        <!-- ===== VFO &amp; FREQUENCY ===== -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="VFO &amp; Frequency"
+            android:textStyle="bold"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"/>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow>
+                <TextView android:text="Active VFO:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spVfo" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Frequency (MHz):" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <EditText android:id="@+id/etFreq" android:inputType="numberDecimal"
+                    android:hint="145.000" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Button android:id="@+id/btnSetFreq" android:text="Set" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+        </TableLayout>
+
+        <!-- ===== MODE &amp; BANDWIDTH ===== -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mode &amp; Bandwidth"
+            android:textStyle="bold"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"/>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow>
+                <TextView android:text="Mode:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spMode" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Bandwidth:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spBw" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Step:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spStep" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+        </TableLayout>
+
+        <!-- ===== FILTERS &amp; ATTENUATOR ===== -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Filters &amp; Attenuator"
+            android:textStyle="bold"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"/>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow>
+                <TextView android:text="Attenuator:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spAtt" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Antenna:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spAnt" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="HPF:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spHpf" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="LPF:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spLpf" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+        </TableLayout>
+
+        <!-- ===== SQUELCH &amp; AUDIO ===== -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Squelch &amp; Audio"
+            android:textStyle="bold"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"/>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow>
+                <TextView android:text="Squelch:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <SeekBar android:id="@+id/sbSquelch" android:max="255" android:progress="0" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:id="@+id/tvSquelchVal" android:text="0" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Beep Vol:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <SeekBar android:id="@+id/sbBeep" android:max="255" android:progress="100" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:id="@+id/tvBeepVal" android:text="100" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+        </TableLayout>
+
+        <!-- ===== TOGGLES ===== -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Toggles"
+            android:textStyle="bold"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Switch android:id="@+id/swAutoMode" android:text="Auto Mode (AU)" android:padding="4dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            <Switch android:id="@+id/swAgcSend" android:text="AGC Level Send (LC)" android:padding="4dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            <Switch android:id="@+id/swDtmf" android:text="DTMF Decoder (QM)" android:padding="4dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            <Switch android:id="@+id/swManualTune" android:text="Manual Tune (MT)" android:padding="4dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            <Switch android:id="@+id/swCyberScan" android:text="Cyber-Scan (DS)" android:padding="4dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            <Switch android:id="@+id/swAfc" android:text="AFC (AF, +3 only)" android:padding="4dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            <Switch android:id="@+id/swDeEmph" android:text="De-emphasis (EN)" android:padding="4dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <!-- ===== TONES &amp; SPECIAL ===== -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tones &amp; Special"
+            android:textStyle="bold"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"/>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow>
+                <TextView android:text="CTCSS:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spCtcss" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Tone Elim:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <SeekBar android:id="@+id/sbToneElim" android:max="255" android:progress="0" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:id="@+id/tvToneElimVal" android:text="0" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Scramble:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <SeekBar android:id="@+id/sbScramble" android:max="127" android:progress="0" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:id="@+id/tvScrambleVal" android:text="0" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="CW Pitch:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spCwPitch" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Sub-Step:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spSubStep" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+        </TableLayout>
+
+        <!-- ===== SCAN SETTINGS ===== -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Scan Settings"
+            android:textStyle="bold"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"/>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow>
+                <TextView android:text="Scan Bank:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spScanBank" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Search Low (MHz):" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <EditText android:id="@+id/etSearchLow" android:inputType="numberDecimal"
+                    android:hint="145.000" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Search High (MHz):" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <EditText android:id="@+id/etSearchHigh" android:inputType="numberDecimal"
+                    android:hint="146.000" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Button android:id="@+id/btnSetSearch" android:text="Set Search Limits" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Scan Level:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <SeekBar android:id="@+id/sbScanLevel" android:max="255" android:progress="100" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:id="@+id/tvScanLevelVal" android:text="100" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Scan Delay:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <SeekBar android:id="@+id/sbScanDelay" android:max="99" android:progress="5" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:id="@+id/tvScanDelayVal" android:text="0.5s" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Auto-Store:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spAutoStore" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+        </TableLayout>
+
+        <!-- ===== MEMORY OPERATIONS ===== -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Memory Operations"
+            android:textStyle="bold"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"/>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow>
+                <TextView android:text="Bank:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spMemBank" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Channel:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Spinner android:id="@+id/spMemCh" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Memo Text:" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <EditText android:id="@+id/etMemoText" android:maxLength="8"
+                    android:hint="Up to 8 chars" android:padding="2dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Button android:id="@+id/btnSetMemo" android:text="Set Memo" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Button android:id="@+id/btnWriteMem" android:text="Write Memory" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <Button android:id="@+id/btnClearMem" android:text="Clear Memory" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </TableRow>
+        </TableLayout>
+
+        <!-- ===== CONFIG MANAGEMENT ===== -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Configuration"
+            android:textStyle="bold"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="3">
+
+            <Button
+                android:id="@+id/btnDefaults"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Defaults"
+                android:background="#ff8888ff"
+                android:textColor="#ffffffff"/>
+
+            <Button
+                android:id="@+id/btnExport"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Export"
+                android:background="#ff44aa44"
+                android:textColor="#ffffffff"/>
+
+            <Button
+                android:id="@+id/btnImport"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Import"
+                android:background="#ffaa4444"
+                android:textColor="#ffffffff"/>
+        </LinearLayout>
+
+        <!-- ===== APPLY ALL BUTTON ===== -->
+        <Button
+            android:id="@+id/btnApplyAll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Apply All Settings"
+            android:layout_marginTop="8dp"
+            android:background="#ff4444ff"
+            android:textColor="#ffffffff"/>
+
+        <!-- Log output for debugging -->
+        <TextView
+            android:id="@+id/tvLog"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="8dp"
+            android:background="#ff222222"
+            android:textColor="#ff00ff00"
+            android:fontFamily="monospace"
+            android:scrollbars="vertical"
+            android:padding="4dp"
+            android:textSize="10sp"
+            android:textIsSelectable="true"/>
+
+    </LinearLayout>
+</ScrollView>
