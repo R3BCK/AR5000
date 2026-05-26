@@ -107,6 +107,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Control Panel"/>
+        <Button
+            android:id="@+id/btnSpectrum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Spectrum Analyzer (CM108)"/>
 
     </LinearLayout>
 </ScrollView>

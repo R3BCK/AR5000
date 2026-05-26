@@ -1,3 +1,4 @@
+//SpectrumView.java
 package com.ar5000.audio;
 import android.content.Context;
 import android.graphics.Canvas;

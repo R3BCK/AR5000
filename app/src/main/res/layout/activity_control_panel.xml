@@ -432,6 +432,13 @@
                 android:text="Import"
                 android:background="#ffaa4444"
                 android:textColor="#ffffffff"/>
+
+            <Button
+                android:id="@+id/btnSpectrum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Spectrum Analyzer"/>
+
         </LinearLayout>
 
         <!-- ===== APPLY ALL BUTTON ===== -->
@@ -457,6 +464,8 @@
             android:padding="4dp"
             android:textSize="10sp"
             android:textIsSelectable="true"/>
+
+
 
     </LinearLayout>
 </ScrollView>
